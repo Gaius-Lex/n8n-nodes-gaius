@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    restart: unless-stopped
+    ports:
+      - '5678:5678'
+    environment:
+      - GENERIC_TIMEZONE=Europe/Warsaw
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - WEBHOOK_URL=http://localhost:5678/
+      - NODE_ENV=production
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_PERSONALIZATION_ENABLED=false
+      - N8N_DEFAULT_LOCALE=pl
+      - N8N_SECURE_COOKIE=false
+      - N8N_DISABLE_PRODUCTION_MAIN_PROCESS=false
+      - N8N_LOG_LEVEL=info
+      - N8N_SKIP_WEBHOOK_DEREGISTRATION_SHUTDOWN=true
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_CUSTOM_EXTENSIONS=/home/node/.n8n/custom
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./:/home/node/.n8n/custom/n8n-nodes-gaius-lex:ro
+volumes:
+  n8n_data:
+
