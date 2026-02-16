@@ -1,0 +1,3592 @@
+openapi: 3.0.0
+info:
+  title: Gaius-Lex API 2.0
+  version: 1.0.0
+  description: |-
+    Gaius-Lex OpenAPI spec for endpoints usable with an Organization API key.
+
+    Authentication:
+
+    - Send header `Authorization: Api-Key {{apiKey}}`
+        
+    - Most endpoints respond with `401` if the header is missing/invalid.
+servers:
+  - url: https://api.gaius-lex.pl
+paths:
+  /api/v1/available-sources:
+    get:
+      summary: /api/v1/available-sources
+      parameters:
+        - name: country
+          in: query
+          schema:
+            type: string
+          example: pl
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Map of source_id -> label
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pl_own_database:
+                    type: string
+                  pl_judiciary:
+                    type: string
+                  pl_eureka:
+                    type: string
+                  pl_codexes:
+                    type: string
+                  pl_eurlex:
+                    type: string
+                  pl_acts:
+                    type: string
+                  kio:
+                    type: string
+                  pl_willami:
+                    type: string
+              example:
+                pl_own_database: Mój dysk
+                pl_judiciary: Orzecznictwo
+                pl_eureka: Interpretacje podatkowe
+                pl_codexes: Kodeksy
+                pl_eurlex: Prawo europejskie
+                pl_acts: Ustawy
+                kio: KIO
+                pl_willami: Web
+      tags:
+        - api
+        - v1
+        - Available Sources
+      description: >-
+        ## Available Sources API
+
+
+        This endpoint allows users to perform a search in Gaius-Lex database
+        based on specified query parameters.
+
+
+        ### Request
+
+
+        - **Method**: `GET`
+            
+        - **Endpoint**: `{{baseUrl}}/api/v1/available-sources`
+            
+
+        ### Response
+
+
+        The response will be in JSON format, indicating the success or failure
+        of the search operation. An example response is:
+
+
+        ``` json
+
+        {
+            "pl_own_database": "Mój dysk",
+            "pl_judiciary": "Orzecznictwo",
+            "pl_eureka": "Interpretacje podatkowe",
+            "pl_codexes": "Kodeksy",
+            "pl_eurlex": "Prawo europejskie",
+            "pl_acts": "Ustawy",
+            "kio": "KIO",
+            "pl_willami": "Web"
+        }
+
+         ```
+
+        This indicates that the request was processed successfully.
+  /api/v1/search:
+    get:
+      summary: /api/v1/search
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+          example: praca
+        - name: page
+          in: query
+          schema:
+            type: integer
+          example: "1"
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+          example: "10"
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+          example: score
+        - name: date_from
+          in: query
+          schema:
+            type: string
+          example: "2025-01-15"
+        - name: date_to
+          in: query
+          schema:
+            type: string
+        - name: categories
+          in: query
+          schema:
+            type: string
+          example: pl_judiciary
+        - name: language
+          in: query
+          schema:
+            type: string
+          example: pl
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        url:
+                          type: string
+                        headline:
+                          type: string
+                        highlight:
+                          type: string
+                        source:
+                          type: string
+                        date:
+                          type: array
+                          items:
+                            type: string
+                            format: date-time
+                        extra_info:
+                          type: object
+                          properties:
+                            glexID:
+                              type: string
+                        gLexID:
+                          type: string
+                  pagination_info:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total:
+                        type: integer
+                      total_pages:
+                        type: integer
+                  shortcut_response:
+                    type: string
+              example:
+                result:
+                  - url: /show-document?gLexID=fe19519d
+                    headline: >-
+                      Rezolucja w sprawie społecznych konsekwencji pracy dzieci
+                      i strategii zwalczania pracy dzieci
+                    highlight: >-
+                      "Wspólnotowy kodeks postępowania w sprawie podziału
+                      <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> w polityce
+                      rozwoju" (COM(2007)0072), - uwzględniając komunikat
+                      Komisji z dnia 9 kwietnia 2008 r. pt. "UE światowym
+                      partnerem na rzecz rozwoju. Przyspieszenie realizacji
+                      milenijnych celów rozwoju" (COM(2008)0177), -
+                      uwzględniając główne wnioski i zalecenia Komitetu ds.(...)
+                      również, iż kraje udzielające pomocy będą pracowały nad
+                      rozwiązaniem problemu krajów, które otrzymują
+                      niewystarczającą pomoc, oraz że dopilnują, żeby nowe
+                      ustalenia w sprawie podziału <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> nie spowodowały,
+                      iż poszczególne kraje rozwijające się otrzymają mniej
+                      pomocy; 27. wzywa do budowania potencjału wszystkich
+                      ministerstw, żeby dzięki wsparciu budżetowemu zwiększyć
+                      skuteczność wydatków na zdrowie, kształcenie i
+                      równouprawnienie płci, ponieważ odpowiedzialność kraju
+                      otrzymującego pomoc zbyt często(...) aby umożliwić im
+                      dalsze podążanie drogą trwałego rozwoju; 30. przyjmuje z
+                      zadowoleniem fakt, że wspólnota darczyńców zobowiązała się
+                      do zwiększenia wysiłków na rzecz współpracy z najuboższymi
+                      krajami oraz że poziom programowalnej pomocy dla Afryki
+                      rośnie w rezultacie zobowiązania do podwojenia oficjalnej
+                      pomocy rozwojowej dla Afryki do 2010 r., tym bardziej że
+                      aktualny wzrost cen ropy i żywności oraz efekt globalnych
+                      zmian klimatu mógłby udaremnić już poczynione starania;
+                      31. wyraża uznanie dla <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>
+                    source: pl_eurlex
+                    date:
+                      - "2008-11-28T00:00:00.000Z"
+                    extra_info:
+                      glexID: fe19519d
+                    gLexID: fe19519d
+                  - url: /show-document?gLexID=6a094431
+                    headline: >-
+                      Dyrektywa Rady z dnia 25 czerwca 1991 r. uzupełniająca
+                      środki mające wspierać poprawę bezpieczeństwa i zdrowia w
+                      pracy pracowników pozostających w stosunku pracy na czas
+                      określony lub w czasowym stosunku pracy
+                    highlight: >-
+                      konkretnego zadania lub wystąpienie określonego zdarzenia;
+                      2. czasowego stosunku <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> pomiędzy agencją
+                      <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> czasowej, tzn.
+                      pracodawcą, i pracownikiem, przy czym ten ostatni jest
+                      przydzielony do <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> dla i pod
+                      kontrolą przedsiębiorstwa oraz/lub firmy korzystającej z
+                      jego usług.(...) Istnienie stosunku <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>, o którym mowa w
+                      art. 1, nie usprawiedliwia różnego traktowania w
+                      odniesieniu do warunków <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>, w zakresie
+                      zapewnienia ochrony bezpieczeństwa i zdrowia w miejscu
+                      <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>, zwłaszcza w
+                      odniesieniu do dostępu do indywidualnego wyposażenia
+                      ochronnego. 3.(...) i higieną <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>.
+                    source: pl_eurlex
+                    date:
+                      - "1991-06-25T00:00:00.000Z"
+                    extra_info:
+                      glexID: 6a094431
+                    gLexID: 6a094431
+                  - url: /show-document?gLexID=6b8f7571
+                    headline: >-
+                      Rezolucja "Wkład Europejskiego Komitetu
+                      Ekonomiczno-Społecznego w program prac Komisji
+                      Europejskiej na 2022 r. na podstawie prac grupy ad hoc
+                      >>Wkład EKES-u w program prac Komisji Europejskiej na 2022
+                      r.<<"
+                    highlight: >-
+                      EKES zauważa, że w ramach polityki społecznej należy
+                      zachęcać do inwestycji związanych z umiejętnościami,
+                      lepiej wspierając krajowe reformy rynku <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> i zabezpieczenia
+                      społecznego, oraz zagwarantować, że Europejski filar praw
+                      socjalnych będzie promował wzrost gospodarczy i ułatwiał
+                      tworzenie miejsc <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>. 3.11.(...) W
+                      sektorze transportu zachowanie wysokiej jakości miejsc
+                      <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> i odpowiednie
+                      warunki <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> to kluczowe
+                      wymogi utrzymania wykwalifikowanej siły roboczej, bez
+                      której nie można zapewnić trwałej konkurencyjności. Należy
+                      utrzymać wysokiej jakości miejsca <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> i odpowiednie
+                      warunki <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>, a także
+                      kontynuować rekrutację i szkolenie wykwalifikowanej siły
+                      roboczej.(...) L 424 z 15.12.2020, s. 1 ). ( 4 ) Do dnia
+                      30 kwietnia 2021 r. krajowe plany przedstawiło jedynie 14
+                      państw członkowskich. ( 5 ) Komunikat Komisji do Rady "Rok
+                      od wybuchu pandemii COVID-19: działania z zakresu polityki
+                      fiskalnej" (COM(2021) 105 final), Bruksela, 3 marca 2021
+                      r. ( 6 ) Rezolucja "Wkład Europejskiego Komitetu
+                      Ekonomiczno-Społecznego w program <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> Komisji
+                      Europejskiej na 2021 r. w oparciu o <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prace</b> grupy ad hoc
+                      >>Wkład EKES-u w program <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> Komisji
+                      Europejskiej na 2021 r.<<" ( Dz.U.
+                    source: pl_eurlex
+                    date:
+                      - "2021-06-09T00:00:00.000Z"
+                    extra_info:
+                      glexID: 6b8f7571
+                    gLexID: 6b8f7571
+                  - url: /show-document?gLexID=00b77f61
+                    headline: >-
+                      Rezolucja "Wkład Europejskiego Komitetu
+                      Ekonomiczno-Społecznego w program prac Komisji
+                      Europejskiej na 2021 r. w oparciu o prace grupy ad hoc
+                      >>Wkład EKES-u w program prac Komisji Europejskiej na 2021
+                      r.<<"
+                    highlight: >-
+                      EKES docenia również dostosowany program <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> na rok 2020, który
+                      stanowi reakcję na kryzys COVID-19 i może zapowiadać
+                      rozwój sytuacji w najbliższej przyszłości. 1.4. EKES z
+                      zadowoleniem przyjmuje fakt, że Komisja Europejska
+                      dostosowała swój program <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> na rok 2020 jako
+                      część europejskiego planu naprawy gospodarczej w
+                      odpowiedzi na pandemię koronawirusa.(...) Przesunięcie w
+                      kierunku działań opartych na usługach doprowadziłoby do
+                      bardziej pracochłonnej gospodarki, równoważącej niepewność
+                      zatrudnienia w tych sektorach, wspierającej wyższe poziomy
+                      zatrudnienia i przywracającej miejsca <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> w gospodarce
+                      realnej. Niezbędna jest zatem polityka promująca <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracę</b> wysokiej jakości
+                      w sektorach pracochłonnych zapewniających wysokiej jakości
+                      usługi. 6.1.9.(...) Potrzebne są również dobrze
+                      funkcjonujące rynki <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>, publiczne służby
+                      zatrudnienia oraz aktywna polityka rynku <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> ( 17 ) . 6.1.10.
+                      EKES popiera strategię Komisji na rzecz równouprawnienia
+                      płci na lata 2020-2025 i zaleca, by Komisja stosowała
+                      strategie uwzględniania aspektu płci we wszystkich
+                      organach zajmujących się programowaniem i zarządzaniem
+                      oraz przyjęła przekrojowe podejście do równości płci.
+                    source: pl_eurlex
+                    date:
+                      - "2020-07-16T00:00:00.000Z"
+                    extra_info:
+                      glexID: 00b77f61
+                    gLexID: 00b77f61
+                  - url: /show-document?gLexID=35e5abc0
+                    headline: >-
+                      Rezolucja Komitetu Regionów w sprawie programu prac
+                      legislacyjnych i programu prac Komisji Europejskiej oraz
+                      priorytetów Komitetu Regionów na rok 2007
+                    highlight: >-
+                      10.3.2007 PL Dziennik Urzędowy Unii Europejskiej C 57/39
+                      (2007/C 57/09) KOMITET REGIONÓW, uwzględniając program
+                      <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> legislacyjnych i
+                      program <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> Komisji na rok
+                      2007 (COM(2006) 629 wersja ostateczna); uwzględniając
+                      strategiczne cele na lata 2005 - 2009 (COM(2005) 12 wersja
+                      ostateczna); uwzględniając rezolucję Komitetu Regionów w
+                      sprawie "Cele polityczne Komitetu Regionów na lata 2006 -
+                      2008" (CdR 11/2006 final); uwzględniając komunikat Komisji
+                      zatytułowany "Wkład Komisji w okres refleksji i plany(...)
+                      Dobrobyt 4.1 Podkreśla potrzebę stałej modernizacji
+                      gospodarki europejskiej i europejskiego modelu społecznego
+                      poprzez odnowioną strategię lizbońską na rzecz wzrostu i
+                      zatrudnienia. 4.2 Podkreśla , że wyniki <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> platformy
+                      monitorowania procesu lizbońskiego (ustanowionej przez KR
+                      w roku 2006) wykazują, że cykl zarządzania procesem
+                      lizbońskim musi zachęcać do większego poczucia udziału w
+                      nim oraz zaangażowania na rzecz osiągania wyników na
+                      wszystkich szczeblach tego procesu, jak również do
+                      ściślejszego(...) Wzywa Komisję, by aktywnie włączyła
+                      władze lokalne i regionalne w proces wyboru dziedzin
+                      priorytetowych dla tej inicjatywy oraz oczekuje , że
+                      zostanie w pełni włączony w <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prace</b> w zakresie tejże
+                      inicjatywy. 4.7 Z zadowoleniem przyjmuje zaproponowaną
+                      przez Komisję Europejską ocenę społeczeństwa
+                      europejskiego, jak również przegląd jednolitego rynku, do
+                      czego Komitet Regionów wniesie wkład przyjmując opinię
+                      perspektywiczną.
+                    source: pl_eurlex
+                    date:
+                      - "2006-12-07T00:00:00.000Z"
+                    extra_info:
+                      glexID: 35e5abc0
+                    gLexID: 35e5abc0
+                  - url: /show-document?gLexID=ccd02551
+                    headline: >-
+                      Rezolucja w sprawie programu prac Komisji Europejskiej na
+                      2016 r.
+                    highlight: >-
+                      10.2.2016 PL Dziennik Urzędowy Unii Europejskiej C 51/1
+                      (2016/C 051/01) KOMITET REGIONÓW - uwzględniając komunikat
+                      Komisji Europejskiej "Program <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> Komisji na 2016
+                      r.(...) Czas na nieprzeciętne działania" oraz umowę o
+                      współpracy między KR-em a Komisją Europejską, -
+                      uwzględniając rezolucję KR-u z 9 lipca 2015 r. w sprawie
+                      priorytetów dotyczących programu <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> Komisji
+                      Europejskiej na 2016 r. oraz rezolucję KR-u z 4 czerwca
+                      2015 r. w sprawie priorytetów Komitetu na szóstą kadencję
+                      w latach 2015-2020, - uwzględniając zasady pomocniczości i
+                      proporcjonalności, Miejsca <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>, wzrost
+                      gospodarczy, inwestycje i polityka spójności 1.(...) Wzywa
+                      Komisję do zaproponowania przeglądu dyrektywy w sprawie
+                      ochrony pracowników przed zagrożeniami związanymi z
+                      narażeniem na działanie czynników rakotwórczych lub
+                      mutagennych podczas <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> oraz wniosku
+                      dotyczącego dyrektywy w sprawie zaburzeń układu
+                      mięśniowo-szkieletowego związanych z wykonywaną <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracą</b>. 36.
+                    source: pl_eurlex
+                    date:
+                      - "2015-12-03T00:00:00.000Z"
+                    extra_info:
+                      glexID: ccd02551
+                    gLexID: ccd02551
+                  - url: /show-document?gLexID=aa0c0630
+                    headline: >-
+                      Rezolucja w sprawie programu prac Komisji Europejskiej na
+                      2015 r.
+                    highlight: >-
+                      28.4.2015 PL Dziennik Urzędowy Unii Europejskiej C 140/1
+                      (2015/C 140/01) EUROPEJSKI KOMITET REGIONÓW Uwzględniając
+                      komunikat Komisji Europejskiej dotyczący jej programu
+                      <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> na rok 2015 oraz
+                      swój protokół o współpracy z Komisją Europejską: 1. Z
+                      zadowoleniem przyjmuje pragnienie Komisji, by zbliżyć się
+                      do obywateli UE i zdobyć ich zaufanie, oraz podkreśla
+                      rolę, jaką w tym zamierzeniu mogą odegrać europejskie
+                      miasta i regiony. 2.(...) Wnosi o zaangażowanie Komitetu w
+                      <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prace</b> grup roboczych
+                      zajmujących się upraszczaniem prawodawstwa europejskiego,
+                      gdyż w wielu przypadkach to władze lokalne i regionalne
+                      odpowiadają za jego wdrażanie. 9.(...) Z zadowoleniem
+                      przyjmuje skupienie się na MŚP i podkreśla wkład tych
+                      przedsiębiorstw we wzrost gospodarczy i tworzenie miejsc
+                      <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> na szczeblu
+                      lokalnym i regionalnym UE. Zaznacza swoją gotowość do
+                      współpracy przy tworzeniu sieci przedstawicieli MŚP na
+                      poziomie regionów. Oczekuje, że nowe wnioski dotyczące
+                      unii rynków kapitałowych przyczynią się do poprawy dostępu
+                      MŚP do finansowania. 32.
+                    source: pl_eurlex
+                    date:
+                      - "2015-02-13T00:00:00.000Z"
+                    extra_info:
+                      glexID: aa0c0630
+                    gLexID: aa0c0630
+                  - url: /show-document?gLexID=e0fe0d18
+                    headline: >-
+                      Rozporządzenie Komisji (WE) NR 1726/1999 z dnia 27 lipca
+                      1999 r. wykonujące rozporządzenie Rady (WE) nr 530/1999
+                      dotyczące statystyk strukturalnych odnoszących się do
+                      zarobków i kosztów pracy w zakresie definicji i
+                      przekazywania informacji w sprawie kosztów pracy
+                    highlight: >-
+                      A.12 Pracownicy zatrudnieni w niepełnym wymiarze czasu
+                      <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> Obejmuje
+                      pracowników (wyłączając praktykantów), których stałe
+                      godziny <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> obejmują krótszy
+                      czas <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> niż zostało to
+                      ustalone wspólnie lub czas krótszy niż zwyczajowo przyjęte
+                      godziny <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> w
+                      przedsiębiorstwie, bez względu na system <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> - dzienny,
+                      tygodniowy lub miesięczny (pół dnia, trzy czwarte czasu,
+                      cztery piąte czasu <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> itd.).(...)
+                      Przepracowane godziny obejmują również: a) czas poświęcony
+                      na takie zadania jak: przygotowanie do <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>, przygotowywanie,
+                      utrzymanie i czyszczenie narzędzi i maszyn oraz pisanie
+                      kart <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> i raportów; b)
+                      czas spędzony w miejscu <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> bez wykonywania
+                      <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> ze względu na,
+                      przykładowo, zatrzymanie <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> maszyn, wypadki
+                      lub chwilowy brak <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>, za który
+                      wypłacane jest wynagrodzenie zgodnie z umową o <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracę</b>; c) krótkie
+                      przerwy w miejscu <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> na odpoczynek, w
+                      tym przerwy na herbatę i kawę; d) godziny faktycznie(...)
+                      regularnie w każdym okresie wypłaty, w tym: - dodatki
+                      przyznawane za <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracę</b> w hałasie, za
+                      ryzyko na stanowisku <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>, za trudną
+                      <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracę</b>, za <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracę</b> w systemie
+                      zmianowym lub <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracę</b> w ruchu ciągłym,
+                      za <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracę</b> w nocy oraz w
+                      niedziele i dni urzędowo wolne od <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>; - premie za
+                      indywidualne osiągnięcia, premie za wyniki, premie za
+                      produkcję, produktywność, odpowiedzialność, staranność,
+                      punktualność, staż <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>, kwalifikacje i
+                      wiedzę szczególną.
+                    source: pl_eurlex
+                    date:
+                      - "1999-07-27T00:00:00.000Z"
+                    extra_info:
+                      glexID: e0fe0d18
+                    gLexID: e0fe0d18
+                  - url: /show-document?gLexID=b357ff1b
+                    headline: >-
+                      Rezolucja Europejskiego Komitetu Regionów - Program prac
+                      Komisji Europejskiej na 2019 r.
+                    highlight: >-
+                      <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>Pracy</b> oraz by włączyć
+                      do jego zarządu przedstawiciela władz regionalnych z
+                      państw członkowskich. 22.(...) Apeluje w szczególności o
+                      przygotowanie w oparciu o art. 153 ust. 2 lit. b) TFUE
+                      dyrektywy unijnej w sprawie <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> za pośrednictwem
+                      platform internetowych w celu ustanowienia minimalnych
+                      standardów sprawiedliwych warunków <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b> w gospodarce
+                      cyfrowej. Rolnictwo i leśnictwo, zdrowie publiczne i
+                      ochrona konsumentów 30.(...) Postuluje, by Komisja
+                      Europejska uwzględniła w pełni wkład władz lokalnych i
+                      regionalnych oraz <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prace</b> wspólnych
+                      komitetów konsultacyjnych i grup roboczych KR-u, zwłaszcza
+                      sprawozdań z postępu <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> z 2019 r.
+                      dotyczących krajów kandydujących i potencjalnych krajów
+                      kandydujących, i ponawia apel, by istniejące programy
+                      finansowania UE, szczególnie TAIEX i współpraca partnerska
+                      zostały dalej dopasowane do potrzeb zainteresowanych stron
+                      szczebla lokalnego i regionalnego. 57.
+                    source: pl_eurlex
+                    date:
+                      - "2018-12-06T00:00:00.000Z"
+                    extra_info:
+                      glexID: b357ff1b
+                    gLexID: b357ff1b
+                  - url: /show-document?gLexID=73aafa4d
+                    headline: >-
+                      Rezolucja Europejskiego Komitetu Regionów - Program prac
+                      Komisji Europejskiej na 2017 r.
+                    highlight: >-
+                      9.6.2017 PL Dziennik Urzędowy Unii Europejskiej C 185/1
+                      (2017/C 185/01) EUROPEJSKI KOMITET REGIONÓW,
+                      uwzględniając: - komunikat Komisji Europejskiej z 25
+                      października 2016 r. w sprawie jej programu <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> na 2017 r., - swe
+                      rezolucje z dnia 4 czerwca 2015 r. w sprawie priorytetów
+                      politycznych KR-u na lata 2015-2020 oraz z dnia 15 czerwca
+                      2016 r. w sprawie wkładu KR-u w program <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> Komisji
+                      Europejskiej na 2017 r., - protokół o współpracy z Komisją
+                      Europejską z lutego 2012 r.; 1.(...) Miejsca <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>, wzrost
+                      gospodarczy, inwestycje i polityka spójności 5. Ubolewa,
+                      że w programie <strong class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>prac</b> niewiele uwagi
+                      poświęcono kluczowej roli, jaką odgrywają europejskie
+                      fundusze strukturalne i inwestycyjne w dotarciu do
+                      wszystkich obywateli i regionów w Europie, zwiększaniu
+                      spójności, wspieraniu innowacyjności i wyrażaniu
+                      rzeczywistej solidarności europejskiej dla harmonijnego
+                      rozwoju całej UE.(...) Zwraca się o uwzględnienie
+                      lokalnych i regionalnych atutów i wyzwań, w tym różnych
+                      lokalnych i regionalnych potrzeb rynku <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>, w ramach nowego
+                      europejskiego programu na rzecz umiejętności . Komitet
+                      oczekuje współpracy w kwestii ram jakości dla staży oraz
+                      wniosku w sprawie zwiększonej mobilności dla praktykantów.
+                      18. Oczekuje odpowiedniego wniosku Komisji w celu poprawy
+                      równowagi między życiem zawodowym a prywatnym, zwłaszcza w
+                      odniesieniu do udziału kobiet w rynku <strong
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;
+                      class=&#x27;preserveHtml&#x27;>pracy</b>. 19.
+                    source: pl_eurlex
+                    date:
+                      - "2016-12-08T00:00:00.000Z"
+                    extra_info:
+                      glexID: 73aafa4d
+                    gLexID: 73aafa4d
+                pagination_info:
+                  page: 1
+                  page_size: 10
+                  total: 10000
+                  total_pages: 666
+                shortcut_response: ""
+        "429":
+          description: Rate limited
+      tags:
+        - api
+        - v1
+        - Search API
+      description: >-
+        ## SIP Search API
+
+
+        This endpoint allows users to perform a search in Gaius-Lex database
+        based on specified query parameters.
+
+
+        ### Request
+
+
+        - **Method**: `GET`
+            
+        - **Endpoint**: `{{baseUrl}}/api/v1/search`
+            
+
+        ### Query Parameters
+
+
+        - `q` (string): The search query string.
+            
+        - `page` (integer): The page number for pagination (default is 1).
+            
+        - `page_size` (integer): The number of results per page (default is 10).
+            
+        - `sort_by` (string): The criteria to sort the results (e.g., by score).
+            
+        - `date_from` (string): The starting date for filtering results (format:
+        YYYY-MM-DD).
+            
+        - `date_to` (string): The ending date for filtering results (format:
+        YYYY-MM-DD).
+            
+        - `categories` (string): Categories to filter the search results. This
+        parameter can be repeated to include multiple categories. To retrieve
+        possible categories use
+            
+        - `language` (string): The language code for the search results (e.g.,
+        'pl' for Polish)
+            
+
+        ### Response
+
+
+        The response will be in JSON format, indicating the success or failure
+        of the search operation. An example response is:
+
+
+        ``` json
+
+        {
+            "result": [
+                {
+                    "url": "/show-document?gLexID=fe19519d",
+                    "headline": "Rezolucja w sprawie społecznych konsekwencji pracy dzieci i strategii zwalczania pracy dzieci",
+                    "highlight": "\"Wspólnotowy kodeks postępowania w sprawie podziału <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> w polityce rozwoju\" (COM(2007)0072), - uwzględniając komunikat Komisji z dnia 9 kwietnia 2008 r. pt. \"UE światowym partnerem na rzecz rozwoju. Przyspieszenie realizacji milenijnych celów rozwoju\" (COM(2008)0177), - uwzględniając główne wnioski i zalecenia Komitetu ds.(...) również, iż kraje udzielające pomocy będą pracowały nad rozwiązaniem problemu krajów, które otrzymują niewystarczającą pomoc, oraz że dopilnują, żeby nowe ustalenia w sprawie podziału <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> nie spowodowały, iż poszczególne kraje rozwijające się otrzymają mniej pomocy; 27. wzywa do budowania potencjału wszystkich ministerstw, żeby dzięki wsparciu budżetowemu zwiększyć skuteczność wydatków na zdrowie, kształcenie i równouprawnienie płci, ponieważ odpowiedzialność kraju otrzymującego pomoc zbyt często(...) aby umożliwić im dalsze podążanie drogą trwałego rozwoju; 30. przyjmuje z zadowoleniem fakt, że wspólnota darczyńców zobowiązała się do zwiększenia wysiłków na rzecz współpracy z najuboższymi krajami oraz że poziom programowalnej pomocy dla Afryki rośnie w rezultacie zobowiązania do podwojenia oficjalnej pomocy rozwojowej dla Afryki do 2010 r., tym bardziej że aktualny wzrost cen ropy i żywności oraz efekt globalnych zmian klimatu mógłby udaremnić już poczynione starania; 31. wyraża uznanie dla <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>",
+                    "source": "pl_eurlex",
+                    "date": [
+                        "2008-11-28T00:00:00.000Z"
+                    ],
+                    "extra_info": {
+                        "glexID": "fe19519d"
+                    },
+                    "gLexID": "fe19519d"
+                },
+                {
+                    "url": "/show-document?gLexID=6a094431",
+                    "headline": "Dyrektywa Rady z dnia 25 czerwca 1991 r. uzupełniająca środki mające wspierać poprawę bezpieczeństwa i zdrowia w pracy pracowników pozostających w stosunku pracy na czas określony lub w czasowym stosunku pracy",
+                    "highlight": "konkretnego zadania lub wystąpienie określonego zdarzenia; 2. czasowego stosunku <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> pomiędzy agencją <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> czasowej, tzn. pracodawcą, i pracownikiem, przy czym ten ostatni jest przydzielony do <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> dla i pod kontrolą przedsiębiorstwa oraz/lub firmy korzystającej z jego usług.(...) Istnienie stosunku <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>, o którym mowa w art. 1, nie usprawiedliwia różnego traktowania w odniesieniu do warunków <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>, w zakresie zapewnienia ochrony bezpieczeństwa i zdrowia w miejscu <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>, zwłaszcza w odniesieniu do dostępu do indywidualnego wyposażenia ochronnego. 3.(...) i higieną <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>.",
+                    "source": "pl_eurlex",
+                    "date": [
+                        "1991-06-25T00:00:00.000Z"
+                    ],
+                    "extra_info": {
+                        "glexID": "6a094431"
+                    },
+                    "gLexID": "6a094431"
+                },
+                {
+                    "url": "/show-document?gLexID=6b8f7571",
+                    "headline": "Rezolucja \"Wkład Europejskiego Komitetu Ekonomiczno-Społecznego w program prac Komisji Europejskiej na 2022 r. na podstawie prac grupy ad hoc >>Wkład EKES-u w program prac Komisji Europejskiej na 2022 r.<<\"",
+                    "highlight": "EKES zauważa, że w ramach polityki społecznej należy zachęcać do inwestycji związanych z umiejętnościami, lepiej wspierając krajowe reformy rynku <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> i zabezpieczenia społecznego, oraz zagwarantować, że Europejski filar praw socjalnych będzie promował wzrost gospodarczy i ułatwiał tworzenie miejsc <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>. 3.11.(...) W sektorze transportu zachowanie wysokiej jakości miejsc <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> i odpowiednie warunki <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> to kluczowe wymogi utrzymania wykwalifikowanej siły roboczej, bez której nie można zapewnić trwałej konkurencyjności. Należy utrzymać wysokiej jakości miejsca <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> i odpowiednie warunki <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>, a także kontynuować rekrutację i szkolenie wykwalifikowanej siły roboczej.(...) L 424 z 15.12.2020, s. 1 ). ( 4 ) Do dnia 30 kwietnia 2021 r. krajowe plany przedstawiło jedynie 14 państw członkowskich. ( 5 ) Komunikat Komisji do Rady \"Rok od wybuchu pandemii COVID-19: działania z zakresu polityki fiskalnej\" (COM(2021) 105 final), Bruksela, 3 marca 2021 r. ( 6 ) Rezolucja \"Wkład Europejskiego Komitetu Ekonomiczno-Społecznego w program <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> Komisji Europejskiej na 2021 r. w oparciu o <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prace</b> grupy ad hoc >>Wkład EKES-u w program <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> Komisji Europejskiej na 2021 r.<<\" ( Dz.U.",
+                    "source": "pl_eurlex",
+                    "date": [
+                        "2021-06-09T00:00:00.000Z"
+                    ],
+                    "extra_info": {
+                        "glexID": "6b8f7571"
+                    },
+                    "gLexID": "6b8f7571"
+                },
+                {
+                    "url": "/show-document?gLexID=00b77f61",
+                    "headline": "Rezolucja \"Wkład Europejskiego Komitetu Ekonomiczno-Społecznego w program prac Komisji Europejskiej na 2021 r. w oparciu o prace grupy ad hoc >>Wkład EKES-u w program prac Komisji Europejskiej na 2021 r.<<\"",
+                    "highlight": "EKES docenia również dostosowany program <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> na rok 2020, który stanowi reakcję na kryzys COVID-19 i może zapowiadać rozwój sytuacji w najbliższej przyszłości. 1.4. EKES z zadowoleniem przyjmuje fakt, że Komisja Europejska dostosowała swój program <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> na rok 2020 jako część europejskiego planu naprawy gospodarczej w odpowiedzi na pandemię koronawirusa.(...) Przesunięcie w kierunku działań opartych na usługach doprowadziłoby do bardziej pracochłonnej gospodarki, równoważącej niepewność zatrudnienia w tych sektorach, wspierającej wyższe poziomy zatrudnienia i przywracającej miejsca <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> w gospodarce realnej. Niezbędna jest zatem polityka promująca <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracę</b> wysokiej jakości w sektorach pracochłonnych zapewniających wysokiej jakości usługi. 6.1.9.(...) Potrzebne są również dobrze funkcjonujące rynki <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>, publiczne służby zatrudnienia oraz aktywna polityka rynku <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> ( 17 ) . 6.1.10. EKES popiera strategię Komisji na rzecz równouprawnienia płci na lata 2020-2025 i zaleca, by Komisja stosowała strategie uwzględniania aspektu płci we wszystkich organach zajmujących się programowaniem i zarządzaniem oraz przyjęła przekrojowe podejście do równości płci.",
+                    "source": "pl_eurlex",
+                    "date": [
+                        "2020-07-16T00:00:00.000Z"
+                    ],
+                    "extra_info": {
+                        "glexID": "00b77f61"
+                    },
+                    "gLexID": "00b77f61"
+                },
+                {
+                    "url": "/show-document?gLexID=35e5abc0",
+                    "headline": "Rezolucja Komitetu Regionów w sprawie programu prac legislacyjnych i programu prac Komisji Europejskiej oraz priorytetów Komitetu Regionów na rok 2007",
+                    "highlight": "10.3.2007 PL Dziennik Urzędowy Unii Europejskiej C 57/39 (2007/C 57/09) KOMITET REGIONÓW, uwzględniając program <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> legislacyjnych i program <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> Komisji na rok 2007 (COM(2006) 629 wersja ostateczna); uwzględniając strategiczne cele na lata 2005 - 2009 (COM(2005) 12 wersja ostateczna); uwzględniając rezolucję Komitetu Regionów w sprawie \"Cele polityczne Komitetu Regionów na lata 2006 - 2008\" (CdR 11/2006 final); uwzględniając komunikat Komisji zatytułowany \"Wkład Komisji w okres refleksji i plany(...) Dobrobyt 4.1 Podkreśla potrzebę stałej modernizacji gospodarki europejskiej i europejskiego modelu społecznego poprzez odnowioną strategię lizbońską na rzecz wzrostu i zatrudnienia. 4.2 Podkreśla , że wyniki <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> platformy monitorowania procesu lizbońskiego (ustanowionej przez KR w roku 2006) wykazują, że cykl zarządzania procesem lizbońskim musi zachęcać do większego poczucia udziału w nim oraz zaangażowania na rzecz osiągania wyników na wszystkich szczeblach tego procesu, jak również do ściślejszego(...) Wzywa Komisję, by aktywnie włączyła władze lokalne i regionalne w proces wyboru dziedzin priorytetowych dla tej inicjatywy oraz oczekuje , że zostanie w pełni włączony w <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prace</b> w zakresie tejże inicjatywy. 4.7 Z zadowoleniem przyjmuje zaproponowaną przez Komisję Europejską ocenę społeczeństwa europejskiego, jak również przegląd jednolitego rynku, do czego Komitet Regionów wniesie wkład przyjmując opinię perspektywiczną.",
+                    "source": "pl_eurlex",
+                    "date": [
+                        "2006-12-07T00:00:00.000Z"
+                    ],
+                    "extra_info": {
+                        "glexID": "35e5abc0"
+                    },
+                    "gLexID": "35e5abc0"
+                },
+                {
+                    "url": "/show-document?gLexID=ccd02551",
+                    "headline": "Rezolucja w sprawie programu prac Komisji Europejskiej na 2016 r.",
+                    "highlight": "10.2.2016 PL Dziennik Urzędowy Unii Europejskiej C 51/1 (2016/C 051/01) KOMITET REGIONÓW - uwzględniając komunikat Komisji Europejskiej \"Program <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> Komisji na 2016 r.(...) Czas na nieprzeciętne działania\" oraz umowę o współpracy między KR-em a Komisją Europejską, - uwzględniając rezolucję KR-u z 9 lipca 2015 r. w sprawie priorytetów dotyczących programu <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> Komisji Europejskiej na 2016 r. oraz rezolucję KR-u z 4 czerwca 2015 r. w sprawie priorytetów Komitetu na szóstą kadencję w latach 2015-2020, - uwzględniając zasady pomocniczości i proporcjonalności, Miejsca <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>, wzrost gospodarczy, inwestycje i polityka spójności 1.(...) Wzywa Komisję do zaproponowania przeglądu dyrektywy w sprawie ochrony pracowników przed zagrożeniami związanymi z narażeniem na działanie czynników rakotwórczych lub mutagennych podczas <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> oraz wniosku dotyczącego dyrektywy w sprawie zaburzeń układu mięśniowo-szkieletowego związanych z wykonywaną <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracą</b>. 36.",
+                    "source": "pl_eurlex",
+                    "date": [
+                        "2015-12-03T00:00:00.000Z"
+                    ],
+                    "extra_info": {
+                        "glexID": "ccd02551"
+                    },
+                    "gLexID": "ccd02551"
+                },
+                {
+                    "url": "/show-document?gLexID=aa0c0630",
+                    "headline": "Rezolucja w sprawie programu prac Komisji Europejskiej na 2015 r.",
+                    "highlight": "28.4.2015 PL Dziennik Urzędowy Unii Europejskiej C 140/1 (2015/C 140/01) EUROPEJSKI KOMITET REGIONÓW Uwzględniając komunikat Komisji Europejskiej dotyczący jej programu <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> na rok 2015 oraz swój protokół o współpracy z Komisją Europejską: 1. Z zadowoleniem przyjmuje pragnienie Komisji, by zbliżyć się do obywateli UE i zdobyć ich zaufanie, oraz podkreśla rolę, jaką w tym zamierzeniu mogą odegrać europejskie miasta i regiony. 2.(...) Wnosi o zaangażowanie Komitetu w <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prace</b> grup roboczych zajmujących się upraszczaniem prawodawstwa europejskiego, gdyż w wielu przypadkach to władze lokalne i regionalne odpowiadają za jego wdrażanie. 9.(...) Z zadowoleniem przyjmuje skupienie się na MŚP i podkreśla wkład tych przedsiębiorstw we wzrost gospodarczy i tworzenie miejsc <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> na szczeblu lokalnym i regionalnym UE. Zaznacza swoją gotowość do współpracy przy tworzeniu sieci przedstawicieli MŚP na poziomie regionów. Oczekuje, że nowe wnioski dotyczące unii rynków kapitałowych przyczynią się do poprawy dostępu MŚP do finansowania. 32.",
+                    "source": "pl_eurlex",
+                    "date": [
+                        "2015-02-13T00:00:00.000Z"
+                    ],
+                    "extra_info": {
+                        "glexID": "aa0c0630"
+                    },
+                    "gLexID": "aa0c0630"
+                },
+                {
+                    "url": "/show-document?gLexID=e0fe0d18",
+                    "headline": "Rozporządzenie Komisji (WE) NR 1726/1999 z dnia 27 lipca 1999 r. wykonujące rozporządzenie Rady (WE) nr 530/1999 dotyczące statystyk strukturalnych odnoszących się do zarobków i kosztów pracy w zakresie definicji i przekazywania informacji w sprawie kosztów pracy",
+                    "highlight": "A.12 Pracownicy zatrudnieni w niepełnym wymiarze czasu <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> Obejmuje pracowników (wyłączając praktykantów), których stałe godziny <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> obejmują krótszy czas <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> niż zostało to ustalone wspólnie lub czas krótszy niż zwyczajowo przyjęte godziny <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> w przedsiębiorstwie, bez względu na system <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> - dzienny, tygodniowy lub miesięczny (pół dnia, trzy czwarte czasu, cztery piąte czasu <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> itd.).(...) Przepracowane godziny obejmują również: a) czas poświęcony na takie zadania jak: przygotowanie do <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>, przygotowywanie, utrzymanie i czyszczenie narzędzi i maszyn oraz pisanie kart <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> i raportów; b) czas spędzony w miejscu <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> bez wykonywania <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> ze względu na, przykładowo, zatrzymanie <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> maszyn, wypadki lub chwilowy brak <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>, za który wypłacane jest wynagrodzenie zgodnie z umową o <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracę</b>; c) krótkie przerwy w miejscu <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> na odpoczynek, w tym przerwy na herbatę i kawę; d) godziny faktycznie(...) regularnie w każdym okresie wypłaty, w tym: - dodatki przyznawane za <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracę</b> w hałasie, za ryzyko na stanowisku <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>, za trudną <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracę</b>, za <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracę</b> w systemie zmianowym lub <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracę</b> w ruchu ciągłym, za <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracę</b> w nocy oraz w niedziele i dni urzędowo wolne od <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>; - premie za indywidualne osiągnięcia, premie za wyniki, premie za produkcję, produktywność, odpowiedzialność, staranność, punktualność, staż <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>, kwalifikacje i wiedzę szczególną.",
+                    "source": "pl_eurlex",
+                    "date": [
+                        "1999-07-27T00:00:00.000Z"
+                    ],
+                    "extra_info": {
+                        "glexID": "e0fe0d18"
+                    },
+                    "gLexID": "e0fe0d18"
+                },
+                {
+                    "url": "/show-document?gLexID=b357ff1b",
+                    "headline": "Rezolucja Europejskiego Komitetu Regionów - Program prac Komisji Europejskiej na 2019 r.",
+                    "highlight": "<strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>Pracy</b> oraz by włączyć do jego zarządu przedstawiciela władz regionalnych z państw członkowskich. 22.(...) Apeluje w szczególności o przygotowanie w oparciu o art. 153 ust. 2 lit. b) TFUE dyrektywy unijnej w sprawie <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> za pośrednictwem platform internetowych w celu ustanowienia minimalnych standardów sprawiedliwych warunków <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b> w gospodarce cyfrowej. Rolnictwo i leśnictwo, zdrowie publiczne i ochrona konsumentów 30.(...) Postuluje, by Komisja Europejska uwzględniła w pełni wkład władz lokalnych i regionalnych oraz <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prace</b> wspólnych komitetów konsultacyjnych i grup roboczych KR-u, zwłaszcza sprawozdań z postępu <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> z 2019 r. dotyczących krajów kandydujących i potencjalnych krajów kandydujących, i ponawia apel, by istniejące programy finansowania UE, szczególnie TAIEX i współpraca partnerska zostały dalej dopasowane do potrzeb zainteresowanych stron szczebla lokalnego i regionalnego. 57.",
+                    "source": "pl_eurlex",
+                    "date": [
+                        "2018-12-06T00:00:00.000Z"
+                    ],
+                    "extra_info": {
+                        "glexID": "b357ff1b"
+                    },
+                    "gLexID": "b357ff1b"
+                },
+                {
+                    "url": "/show-document?gLexID=73aafa4d",
+                    "headline": "Rezolucja Europejskiego Komitetu Regionów - Program prac Komisji Europejskiej na 2017 r.",
+                    "highlight": "9.6.2017 PL Dziennik Urzędowy Unii Europejskiej C 185/1 (2017/C 185/01) EUROPEJSKI KOMITET REGIONÓW, uwzględniając: - komunikat Komisji Europejskiej z 25 października 2016 r. w sprawie jej programu <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> na 2017 r., - swe rezolucje z dnia 4 czerwca 2015 r. w sprawie priorytetów politycznych KR-u na lata 2015-2020 oraz z dnia 15 czerwca 2016 r. w sprawie wkładu KR-u w program <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> Komisji Europejskiej na 2017 r., - protokół o współpracy z Komisją Europejską z lutego 2012 r.; 1.(...) Miejsca <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>, wzrost gospodarczy, inwestycje i polityka spójności 5. Ubolewa, że w programie <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>prac</b> niewiele uwagi poświęcono kluczowej roli, jaką odgrywają europejskie fundusze strukturalne i inwestycyjne w dotarciu do wszystkich obywateli i regionów w Europie, zwiększaniu spójności, wspieraniu innowacyjności i wyrażaniu rzeczywistej solidarności europejskiej dla harmonijnego rozwoju całej UE.(...) Zwraca się o uwzględnienie lokalnych i regionalnych atutów i wyzwań, w tym różnych lokalnych i regionalnych potrzeb rynku <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>, w ramach nowego europejskiego programu na rzecz umiejętności . Komitet oczekuje współpracy w kwestii ram jakości dla staży oraz wniosku w sprawie zwiększonej mobilności dla praktykantów. 18. Oczekuje odpowiedniego wniosku Komisji w celu poprawy równowagi między życiem zawodowym a prywatnym, zwłaszcza w odniesieniu do udziału kobiet w rynku <strong class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27; class=&#x27;preserveHtml&#x27;>pracy</b>. 19.",
+                    "source": "pl_eurlex",
+                    "date": [
+                        "2016-12-08T00:00:00.000Z"
+                    ],
+                    "extra_info": {
+                        "glexID": "73aafa4d"
+                    },
+                    "gLexID": "73aafa4d"
+                }
+            ],
+            "pagination_info": {
+                "page": 1,
+                "page_size": 10,
+                "total": 10000,
+                "total_pages": 666
+            },
+            "shortcut_response": ""
+        }
+
+         ```
+
+        This indicates that the request was processed successfully. Further
+        details about the search results will be included in the actual
+        response.
+  /api/v1/agent-profiles:
+    get:
+      summary: /api/v1/agent-profiles
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: List of available workflow profiles (user hats)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  user_hats:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key_0:
+                          type: boolean
+                        key_1:
+                          type: integer
+              example:
+                status: string
+                user_hats:
+                  - key_0: true
+                    key_1: 8952
+                  - key_0: 7415.105285455657
+                    key_1: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+      tags:
+        - api
+        - v1
+        - Agent Profiles info
+  /api/v1/external/vectorize:
+    post:
+      summary: /api/v1/external/vectorize
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Already existed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  path:
+                    type: string
+                  fileId:
+                    type: string
+                  already_existed:
+                    type: boolean
+              example:
+                status: string
+                path: string
+                fileId: string
+                already_existed: true
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  path:
+                    type: string
+                  fileId:
+                    type: string
+                  already_existed:
+                    type: boolean
+              example:
+                status: string
+                path: string
+                fileId: string
+                already_existed: true
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "415":
+          description: Unsupported media type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+      tags:
+        - api
+        - v1
+        - Files Upload
+        - vectorize
+  /api/v1/external/document/{file_id}:
+    get:
+      summary: /api/v1/external/document/:file_id
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Document text
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fileId:
+                    type: integer
+                  path:
+                    type: string
+                  name:
+                    type: string
+                  content:
+                    type: string
+                  encrypted:
+                    type: boolean
+              example:
+                fileId: 669
+                path: string
+                name: string
+                content: string
+                encrypted: false
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "409":
+          description: Content not ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+      tags:
+        - api
+        - v1
+        - Files Upload
+        - Get Document
+        - "{file_id}"
+    parameters:
+      - name: file_id
+        in: path
+        required: true
+        schema:
+          type: integer
+        example: "9260"
+  /api/v1/external/list-documents:
+    get:
+      summary: /api/v1/external/list-documents
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Documents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  documents:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        fileId:
+                          type: integer
+                        name:
+                          type: string
+                        path:
+                          type: string
+                        added:
+                          type: string
+                        status:
+                          type: string
+                        status_id:
+                          type: integer
+              example:
+                documents:
+                  - fileId: 8828
+                    name: string
+                    path: string
+                    added: string
+                    status: string
+                    status_id: 4642
+                  - fileId: 8391
+                    name: string
+                    path: string
+                    added: string
+                    status: string
+                    status_id: 4075
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+      tags:
+        - api
+        - v1
+        - Files Upload
+        - list-documents
+  /api/v1/agent:
+    post:
+      summary: /api/v1/agent
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+              example:
+                status: processing
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+      tags:
+        - api
+        - v1
+        - Gaius Agent API
+        - workflow
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                endpoint:
+                  type: string
+                  format: uri
+                temp_token:
+                  type: string
+                max_tool_calls:
+                  type: integer
+                max_lex_budget_agent:
+                  type: integer
+                permission_mode:
+                  type: string
+                profile_id:
+                  type: string
+                source_filters:
+                  type: object
+                  properties:
+                    key_0:
+                      type: integer
+                exclude_file_inputs_from_tools:
+                  type: boolean
+            example:
+              endpoint: http://shvxtKkFqM.mbpWYVinTHeyU2.poSJApMPQmv+
+              temp_token: string
+              max_tool_calls: 5
+              max_lex_budget_agent: 50
+              permission_mode: always_allow
+              profile_id: string
+              source_filters:
+                key_0: 9202
+              exclude_file_inputs_from_tools: false
+  /api/v1/agent/poll/{request_id}:
+    get:
+      summary: /api/v1/agent/poll/:request_id
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      key_0:
+                        type: number
+                  status:
+                    type: string
+              example:
+                result:
+                  key_0: 6139.518084807943
+                status: success
+        "202":
+          description: Still processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                status: processing
+                message: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "500":
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  reason:
+                    type: string
+              example:
+                status: error
+                reason: string
+      tags:
+        - api
+        - v1
+        - Gaius Agent API
+        - poll
+        - "{request_id}"
+    parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: 2b6019e5-34c0-45ec-9639-ad41e241f106
+  /api/v1/agent/poll:
+    post:
+      summary: /api/v1/agent/poll
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+              example:
+                request_id: 8a4fc8c4-6bda-6784-4094-70e1ed2b96cc
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        default:
+          description: Access File
+      tags:
+        - api
+        - v1
+        - Gaius Agent API
+        - poll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                      message:
+                        type: string
+                max_tool_calls:
+                  type: integer
+                max_lex_budget_agent:
+                  type: integer
+                permission_mode:
+                  type: string
+                profile_id:
+                  type: string
+                source_filters:
+                  type: object
+                  properties:
+                    pl_judiciary:
+                      type: object
+                      properties:
+                        enable:
+                          type: boolean
+                exclude_file_inputs_from_tools:
+                  type: boolean
+            example:
+              messages:
+                - role: human
+                  message: Czy kot może po mnie dziedziczyć?
+              max_tool_calls: 5
+              max_lex_budget_agent: 50
+              permission_mode: always_allow
+              profile_id: asystent
+              source_filters:
+                pl_judiciary:
+                  enable: true
+              exclude_file_inputs_from_tools: false
+  /api/v1/answer/poll/{request_id}:
+    get:
+      summary: /api/v1/answer/poll/:request_id
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  answer:
+                    type: string
+              example:
+                status: success
+                answer: string
+        "202":
+          description: Still processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                status: processing
+                message: string
+        "404":
+          description: Not found
+        "500":
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  reason:
+                    type: string
+              example:
+                status: error
+                reason: string
+      tags:
+        - api
+        - v1
+        - Answer API
+        - poll
+        - "{request_id}"
+    parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: be33dd2c-2f20-8f6c-b635-a242b91b87bc
+  /api/v1/answer/poll:
+    post:
+      summary: /api/v1/answer/poll
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+              example:
+                request_id: 8a4fc8c4-6bda-6784-4094-70e1ed2b96cc
+        "401":
+          description: Unauthorized
+      tags:
+        - api
+        - v1
+        - Answer API
+        - poll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                simplify:
+                  type: boolean
+            example:
+              question: string
+              simplify: false
+  /api/v1/answer:
+    post:
+      summary: /api/v1/answer
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+              example:
+                status: processing
+        "401":
+          description: Unauthorized
+      tags:
+        - api
+        - v1
+        - Answer API
+        - webhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                endpoint:
+                  type: string
+                  format: uri
+                temp_token:
+                  type: string
+                question:
+                  type: string
+                simplify:
+                  type: boolean
+            example:
+              endpoint: http://BokqGlHVgDfZHrQwqwMycbtsJn.ttepUypyH+Ys8gbnHgt
+              temp_token: string
+              question: string
+              simplify: false
+  /api/v1/ocr/poll/{request_id}:
+    get:
+      summary: /api/v1/ocr/poll/:request_id
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  text:
+                    type: string
+                  file_name:
+                    type: string
+                  file_type:
+                    type: string
+                  engine:
+                    type: string
+              example:
+                status: success
+                text: string
+                file_name: string
+                file_type: string
+                engine: string
+        "202":
+          description: Still processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                status: processing
+                message: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "500":
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  reason:
+                    type: string
+              example:
+                status: error
+                reason: string
+      tags:
+        - api
+        - v1
+        - Optical Character Recognition (OCR)
+        - poll
+        - "{request_id}"
+    parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: be33dd2c-2f20-8f6c-b635-a242b91b87bc
+  /api/v1/ocr/poll:
+    post:
+      summary: /api/v1/ocr/poll
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+              example:
+                request_id: c630203d-c02e-f05f-0ed2-d16ed97794f8
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "415":
+          description: Unsupported media type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+      tags:
+        - api
+        - v1
+        - Optical Character Recognition (OCR)
+        - poll
+  /api/v1/anonymization:
+    post:
+      summary: /api/v1/anonymization
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Anonymized output
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  anonymized_text:
+                    type: string
+                  entities:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key_0:
+                          type: integer
+                  sentence_entities:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key_0:
+                          type: number
+              example:
+                anonymized_text: string
+                entities:
+                  - key_0: 8060
+                  - key_0: 7696
+                    key_1: true
+                    key_2: 4969.371600006735
+                sentence_entities:
+                  - key_0: 9029.352118383667
+                  - key_0: 1380
+                    key_1: string
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "500":
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+      tags:
+        - api
+        - v1
+        - Anonymization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                entities:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      key_0:
+                        type: integer
+                      key_1:
+                        type: string
+                threshold:
+                  type: number
+                include_lemmas:
+                  type: boolean
+            example:
+              text: string
+              entities:
+                - key_0: 6020
+                  key_1: string
+                - key_0: string
+                  key_1: false
+                  key_2: string
+              threshold: 0.3
+              include_lemmas: true
+  /api/v1/doc-verification/poll/{request_id}:
+    get:
+      summary: /api/v1/doc-verification/poll/:request_id
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        signature:
+                          type: string
+                        status:
+                          type: string
+                        message:
+                          type: string
+                        source:
+                          type: string
+                        url:
+                          type: string
+              example:
+                status: success
+                results:
+                  - signature: string
+                    status: string
+                    message: string
+                    source: string
+                    url: string
+                  - signature: string
+                    status: string
+                    message: string
+                    source: string
+                    url: string
+        "202":
+          description: Still processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                status: processing
+                message: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "500":
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  reason:
+                    type: string
+              example:
+                status: error
+                reason: string
+      tags:
+        - api
+        - v1
+        - Doc Verification
+        - poll
+        - "{request_id}"
+    parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: be33dd2c-2f20-8f6c-b635-a242b91b87bc
+  /api/v1/doc-verification/poll:
+    post:
+      summary: /api/v1/doc-verification/poll
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+              example:
+                request_id: 8a4fc8c4-6bda-6784-4094-70e1ed2b96cc
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+      tags:
+        - api
+        - v1
+        - Doc Verification
+        - poll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fileId:
+                  type: integer
+                deep_check:
+                  type: boolean
+                check_judiciary:
+                  type: boolean
+                check_interpretations:
+                  type: boolean
+                check_acts:
+                  type: boolean
+                check_kio:
+                  type: boolean
+            example:
+              fileId: 3365
+              deep_check: false
+              check_judiciary: true
+              check_interpretations: true
+              check_acts: false
+              check_kio: false
+  /api/v1/abusivity/poll/{request_id}:
+    get:
+      summary: /api/v1/abusivity/poll/:request_id
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  text:
+                    type: string
+                  abusivity_risk:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key_0:
+                          type: integer
+              example:
+                status: success
+                text: string
+                abusivity_risk:
+                  - key_0: 6828
+                  - key_0: string
+                    key_1: 6202.483550988634
+                    key_2: string
+        "202":
+          description: Still processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                status: processing
+                message: string
+        "404":
+          description: Not found
+        "500":
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  reason:
+                    type: string
+              example:
+                status: error
+                reason: string
+      tags:
+        - api
+        - v1
+        - "[BETA] Abusivity"
+        - poll
+        - "{request_id}"
+    parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: be33dd2c-2f20-8f6c-b635-a242b91b87bc
+  /api/v1/abusivity/poll:
+    post:
+      summary: /api/v1/abusivity/poll
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+              example:
+                request_id: 8a4fc8c4-6bda-6784-4094-70e1ed2b96cc
+      tags:
+        - api
+        - v1
+        - "[BETA] Abusivity"
+        - poll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+            example:
+              text: string
+  /api/v1/abusivity:
+    post:
+      summary: /api/v1/abusivity
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+              example:
+                status: processing
+      tags:
+        - api
+        - v1
+        - "[BETA] Abusivity"
+        - webhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                endpoint:
+                  type: string
+                  format: uri
+                temp_token:
+                  type: string
+                text:
+                  type: string
+            example:
+              endpoint: http://fchUCmu.mwkmurKxup
+              temp_token: string
+              text: string
+  /api/v1/theses-analysis/poll/{request_id}:
+    get:
+      summary: /api/v1/theses-analysis/poll/:request_id
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  text:
+                    type: string
+                  theses_analysis:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key_0:
+                          type: boolean
+                        key_1:
+                          type: integer
+                        key_2:
+                          type: string
+              example:
+                status: success
+                text: string
+                theses_analysis:
+                  - key_0: false
+                    key_1: 5856
+                    key_2: string
+                  - key_0: 7973
+                    key_1: 86.54437286628847
+        "202":
+          description: Still processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                status: processing
+                message: string
+        "404":
+          description: Not found
+        "500":
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  reason:
+                    type: string
+              example:
+                status: error
+                reason: string
+      tags:
+        - api
+        - v1
+        - "[BETA] Theses-analysis"
+        - poll
+        - "{request_id}"
+    parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: be33dd2c-2f20-8f6c-b635-a242b91b87bc
+  /api/v1/theses-analysis/poll:
+    post:
+      summary: /api/v1/theses-analysis/poll
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+              example:
+                request_id: 8a4fc8c4-6bda-6784-4094-70e1ed2b96cc
+      tags:
+        - api
+        - v1
+        - "[BETA] Theses-analysis"
+        - poll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+            example:
+              text: string
+  /api/v1/theses-analysis:
+    post:
+      summary: /api/v1/theses-analysis
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "202":
+          description: Accepted
+      tags:
+        - api
+        - v1
+        - "[BETA] Theses-analysis"
+        - webhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                endpoint:
+                  type: string
+                  format: uri
+                temp_token:
+                  type: string
+                text:
+                  type: string
+            example:
+              endpoint: http://fchUCmu.mwkmurKxup
+              temp_token: string
+              text: string
+  /api/v1/alignment/poll/{request_id}:
+    get:
+      summary: /api/v1/alignment/poll/:request_id
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  text:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      key_0:
+                        type: integer
+                      key_1:
+                        type: boolean
+                      key_2:
+                        type: string
+                      key_3:
+                        type: string
+              example:
+                status: success
+                text: string
+                result:
+                  key_0: 2785
+                  key_1: true
+                  key_2: string
+                  key_3: string
+        "202":
+          description: Still processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                status: processing
+                message: string
+        "404":
+          description: Not found
+        "500":
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  reason:
+                    type: string
+              example:
+                status: error
+                reason: string
+      tags:
+        - api
+        - v1
+        - "[BETA] Alignment"
+        - poll
+        - "{request_id}"
+    parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: be33dd2c-2f20-8f6c-b635-a242b91b87bc
+  /api/v1/alignment/poll:
+    post:
+      summary: /api/v1/alignment/poll
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+              example:
+                request_id: 8a4fc8c4-6bda-6784-4094-70e1ed2b96cc
+      tags:
+        - api
+        - v1
+        - "[BETA] Alignment"
+        - poll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rules:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      rule:
+                        type: string
+                      mode:
+                        type: string
+                text:
+                  type: string
+            example:
+              rules:
+                - rule: string
+                  mode: must_not_find
+                - rule: string
+                  mode: must_find
+              text: string
+  /api/v1/alignment/rule-extraction:
+    post:
+      summary: /api/v1/alignment/rule-extraction
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Extracted rules
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rules:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rule:
+                          type: string
+                        mode:
+                          type: string
+              example:
+                rules:
+                  - rule: string
+                    mode: must_find
+                  - rule: string
+                    mode: must_not_find
+        "401":
+          description: Unauthorized
+      tags:
+        - api
+        - v1
+        - "[BETA] Alignment"
+        - rule-extraction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+            example:
+              text: string
+  /api/v1/alignment:
+    post:
+      summary: /api/v1/alignment
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+              example:
+                status: processing
+      tags:
+        - api
+        - v1
+        - "[BETA] Alignment"
+        - webhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                endpoint:
+                  type: string
+                  format: uri
+                temp_token:
+                  type: string
+                rules:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      rule:
+                        type: string
+                      mode:
+                        type: string
+                text:
+                  type: string
+            example:
+              endpoint: >-
+                http://zxOToViZUvZXlelMPqOO.keslv6-VtRZKDCGPBXMAGVNY+vg,PRg2hKm15JZalF4LW+DbD2Ie5
+              temp_token: string
+              rules:
+                - rule: string
+                  mode: must_find
+                - rule: string
+                  mode: must_find
+              text: string
+  /api/v1/krs:
+    get:
+      summary: /api/v1/krs
+      parameters:
+        - name: krs
+          in: query
+          schema:
+            type: string
+          example: string
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Simplified KRS relationships
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key_0:
+                    type: boolean
+              example:
+                key_0: false
+        "400":
+          description: Invalid request
+        "401":
+          description: Unauthorized
+      tags:
+        - api
+        - v1
+        - "[BETA] KRS"
+  /api/v1/krs-text-analysis:
+    post:
+      summary: /api/v1/krs-text-analysis
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Extracted KRS/NIP/company mentions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  krs:
+                    type: array
+                    items:
+                      type: string
+                  nip:
+                    type: array
+                    items:
+                      type: string
+                  companies:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key_0:
+                          type: integer
+                        key_1:
+                          type: boolean
+                  key_0:
+                    type: string
+              example:
+                message: string
+                krs:
+                  - string
+                  - string
+                nip:
+                  - string
+                  - string
+                companies:
+                  - key_0: 2009
+                    key_1: true
+                  - key_0: 8376
+                    key_1: 690.6051637230604
+                    key_2: 935
+                key_0: string
+        "401":
+          description: Unauthorized
+      tags:
+        - api
+        - v1
+        - "[BETA] krs-text-analysis"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                filePath:
+                  type: string
+            example:
+              text: string
+              filePath: ""
+  /api/v1/krs-agreement:
+    get:
+      summary: /api/v1/krs-agreement
+      parameters:
+        - name: krs
+          in: query
+          schema:
+            type: string
+          example: string
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "200":
+          description: Representation summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  krs:
+                    type: string
+                  representation:
+                    type: string
+              example:
+                krs: string
+                representation: string
+        "400":
+          description: Invalid request
+        "401":
+          description: Unauthorized
+        "502":
+          description: Upstream error
+      tags:
+        - api
+        - v1
+        - "[BETA] krs-agreement"
+  /core_api/api-key/create:
+    post:
+      summary: Requires an API key that belongs to the `create_key` group.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Api-Key {{apiKey}}
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+              example:
+                key: string
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                error: string
+                reason: string
+                status: string
+                message: string
+        "401":
+          description: Unauthorized
+      tags:
+        - core_api
+        - api-key
+        - create
+      description: Requires an API key that belongs to the `create_key` group.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+            example:
+              name: string

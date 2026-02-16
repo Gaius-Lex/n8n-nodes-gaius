@@ -1,19 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 
-const srcPng = path.resolve(__dirname, '..', 'logo-full-256x.png');
+const srcSvg = path.resolve(__dirname, '..', 'nodes', 'GaiusLex', 'gaiuslex.svg');
 const dstDir = path.resolve(__dirname, '..', 'dist', 'nodes', 'GaiusLex');
-const dstPng = path.join(dstDir, 'logo-full-256x.png');
+const dstSvg = path.join(dstDir, 'gaiuslex.svg');
 
 try {
-	if (!fs.existsSync(srcPng)) {
-		process.exit(0);
-	}
 	fs.mkdirSync(dstDir, { recursive: true });
-	fs.copyFileSync(srcPng, dstPng);
+	if (fs.existsSync(srcSvg)) {
+		fs.copyFileSync(srcSvg, dstSvg);
+	}
 	process.exit(0);
 } catch (e) {
 	console.error(e);
 	process.exit(1);
 }
-

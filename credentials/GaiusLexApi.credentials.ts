@@ -1,4 +1,4 @@
-import type { IAuthenticateGeneric, ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
+import type { ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class GaiusLexApi implements ICredentialType {
 	name = 'gaiusLexApi';
@@ -6,30 +6,21 @@ export class GaiusLexApi implements ICredentialType {
 	documentationUrl = '';
 	properties: INodeProperties[] = [
 		{
+			displayName: 'Base URL',
+			name: 'baseUrl',
+			description: 'The base URL for the Gaius-Lex API',
+			type: 'string',
+			default: 'https://api.gaius-lex.pl',
+			required: true,
+		},
+		{
 			displayName: 'API Key',
 			name: 'apiKey',
 			description: 'API key in format provided by Gaius-Lex',
 			type: 'string',
+			typeOptions: { password: true },
 			default: '',
 			required: true,
 		},
 	];
-
-	authenticate: IAuthenticateGeneric = {
-		type: 'generic',
-		properties: {
-			headers: {
-				Authorization: 'Api-Key {{$credentials.apiKey}}',
-			},
-		},
-	};
-
-	test: ICredentialTestRequest = {
-		request: {
-			baseURL: 'https://gaius-lex.pl',
-			url: '/',
-			method: 'GET',
-		},
-	};
 }
-
