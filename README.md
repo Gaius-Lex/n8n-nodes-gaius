@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Gaius N8n
 
 
@@ -91,3 +92,34 @@ For open source projects, say how it is licensed.
 
 ## Project status
 If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+=======
+## n8n-nodes-gaius-lex
+
+Community node for n8n integrating the Gaius-Lex API.
+
+### Install
+
+- Copy this folder into your n8n custom nodes directory or install via npm:
+
+```bash
+npm i n8n-nodes-gaius-lex
+```
+
+### Credentials
+
+- Gaius-Lex API: set your API key. Header used: `Authorization: Api-Key <KEY>`.
+
+### Node operations
+
+- Answer: POST /backend/api/v1/poll/answer, GET /backend/api/v1/poll/answer/:id
+- Theses Analysis: POST /backend/api/v1/poll/theses-analysis, GET /backend/api/v1/poll/theses-analysis/:id
+- Abusivity: POST /backend/api/v1/poll/abusivity, GET /backend/api/v1/poll/abusivity/:id
+- Alignment: POST /backend/api/v1/alignment/rule-extraction, POST /backend/api/v1/poll/alignment, GET /backend/api/v1/poll/alignment/:id
+
+### Build
+
+```bash
+npm run build
+```
+
+>>>>>>> dev

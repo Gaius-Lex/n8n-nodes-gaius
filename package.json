@@ -1,0 +1,37 @@
+{
+	"name": "n8n-nodes-gaius-lex",
+	"version": "0.1.0",
+	"description": "n8n community node for Gaius-Lex API",
+	"author": "",
+	"license": "MIT",
+	"keywords": [
+		"n8n-community-node",
+		"n8n",
+		"gaius-lex",
+		"legal"
+	],
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc && node scripts/postbuild-copy-assets.cjs",
+		"prepublishOnly": "npm run build"
+	},
+	"dependencies": {
+		"n8n-core": "^1.49.0",
+		"n8n-workflow": "^1.49.0"
+	},
+	"devDependencies": {
+		"@types/node": "^18.19.50",
+		"typescript": "^5.4.5"
+	},
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"nodes": [
+			"dist/nodes/GaiusLex/GaiusLex.node.js"
+		],
+		"credentials": [
+			"dist/credentials/GaiusLexApi.credentials.js"
+		]
+	}
+}
+

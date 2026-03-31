@@ -1,0 +1,1264 @@
+{
+	"info": {
+		"_postman_id": "e475782d-dc8e-41cb-b318-66132d057045",
+		"name": "Gaius-Lex API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14541457"
+	},
+	"item": [
+		{
+			"name": "Answer API",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Api-Key {{GaiusLexApiKey}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"question\": \"Czy można przejąć zarządzanie ASI bez uprzedniego zgłoszenia do KNF zamiaru zarządzania ASI w trybie art. 70w ustawy o funduszach inwestycyjnych?\",\n    \"simplify\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gaius-lex.pl/backend/api/v1/poll/answer",
+					"protocol": "https",
+					"host": [
+						"gaius-lex",
+						"pl"
+					],
+					"path": [
+						"backend",
+						"api",
+						"v1",
+						"poll",
+						"answer"
+					]
+				},
+				"description": "## Endpoint: Poll Answer Submission\n\nThis endpoint is used to submit an answer to a poll question. Upon successful submission, it processes the provided answer and returns a unique request identifier.\n\n### Request\n\n- **Method**: POST\n    \n- **URL**: `https://gaius-lex.pl/backend/api/v1/poll/answer`\n    \n- **Content-Type**: application/json\n    \n\n#### Request Body\n\nThe request body must be a JSON object containing the following parameters:\n\n- **question** (string): A string representing the question being answered. For example, it can be a question related to a specific topic or survey.\n    \n- **simplify** (boolean): A flag indicating whether to simplify the response or not. Set to `true` to enable simplification.\n    \n\n### Response\n\nUpon successful processing of the request, the server will respond with:\n\n- **Status Code**: 202 (Accepted)\n    \n- **Content-Type**: application/json\n    \n\n#### Response Body\n\nThe response will be a JSON object containing:\n\n- **request_id** (string): A unique identifier for the request. This can be used to track the status of the poll answer submission.\n    \n\n### Example\n\n#### Request Example\n\n``` json\n{\n  \"question\": \"Czy można przejąć zarządzanie ...\",\n  \"simplify\": true\n}\n\n ```\n\n#### Response Example\n\n``` json\n{\n  \"request_id\": \"\"\n}\n\n ```\n\nThis endpoint is useful for applications that need to submit answers to polls, providing a mechanism to track the submission and response process."
+			},
+			"response": [
+				{
+					"name": "Simplified Answer",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Api-Key {{GaiusLexApiKey}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"question\": \"Czy można przejąć zarządzanie ASI bez uprzedniego zgłoszenia do KNF zamiaru zarządzania ASI w trybie art. 70w ustawy o funduszach inwestycyjnych?\",\n    \"simplify\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gaius-lex.pl/backend/api/v1/poll/answer",
+							"protocol": "https",
+							"host": [
+								"gaius-lex",
+								"pl"
+							],
+							"path": [
+								"backend",
+								"api",
+								"v1",
+								"poll",
+								"answer"
+							]
+						}
+					},
+					"status": "Accepted",
+					"code": 202,
+					"_postman_previewlanguage": "Text",
+					"header": [
+						{
+							"key": "Allow",
+							"value": "POST, OPTIONS"
+						},
+						{
+							"key": "Alt-Svc",
+							"value": "h3=\":443\"; ma=2592000"
+						},
+						{
+							"key": "Content-Length",
+							"value": "53"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 27 Aug 2025 07:14:54 GMT"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Server",
+							"value": "uvicorn"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie, origin"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"request_id\": \"38c3082b-5ce1-430e-b31a-1cba288dd0c4\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Answer API retrieve",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Api-Key {{GaiusLexApiKey}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gaius-lex.pl/backend/api/v1/poll/answer/daf3042b-011a-435c-8791-0897f63106a1",
+					"protocol": "https",
+					"host": [
+						"gaius-lex",
+						"pl"
+					],
+					"path": [
+						"backend",
+						"api",
+						"v1",
+						"poll",
+						"answer",
+						"daf3042b-011a-435c-8791-0897f63106a1"
+					]
+				},
+				"description": "## API Endpoint: Retrieve Poll Answer\n\n### Description\n\nThis endpoint allows users to retrieve the answer to a specific poll identified by its unique ID. The request is made via an HTTP GET method, and it is designed to return the answer associated with the given poll ID.\n\n### Request Format\n\n- **Method**: GET\n    \n- **URL**: `https://gaius-lex.pl/backend/api/v1/poll/answer/{poll_id}`\n    \n- **Path Parameter**:\n    \n    - `poll_id` (string): The unique identifier of the poll for which the answer is being requested.\n        \n\n### Request Body\n\nThe request does not require a body.\n\n### Response Structure\n\nUpon a successful request, the API will return a JSON response with the following structure:\n\n#### Still processing\n\n``` json\n{\n    \"message\": \"Your answer is still being processed. Please wait.\"\n}\n\n ```\n\n#### Processing is finished\n\n``` json\n{\n  \"answer\": \"The answer related to the poll\"\n}\n\n ```\n\n- **answer** (string): The answer to the poll. This field may be empty if there is no answer associated with the poll.\n    \n\n### Status Codes\n\n- **200 OK**: The request was successful, and the answer has been retrieved.\n    \n- **202 Accepted**: The request was successful, but the answer is still being processed.\n    \n- **404 Not Found**: The specified poll ID does not exist.\n    \n- **400 Bad Request**: The request was malformed or missing required parameters.\n    \n\n### Example Response\n\n``` json\n{\n  \"answer\": \"\"\n}\n\n ```\n\nThis indicates that the poll exists, but there is no answer currently available."
+			},
+			"response": [
+				{
+					"name": "Retrieved answer",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Api-Key {{GaiusLexApiKey}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Po wypadku drogowym kierowca ucieka z miejsca zdarzenia, co jest przestępstwem. Bał się konsekwencji prawnych i nie chciał ponosić odpowiedzialności, tym bardziej że kierowca był pijany, co zaostrzyłoby karę. Popełnił przez to szereg wykroczeń, w tym nieudzielenie pomocy poszkodowanemu oraz niezgłoszenie wypadku odpowiednim służbom.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gaius-lex.pl/backend/api/v1/poll/answer/38c3082b-5ce1-430e-b31a-1cba288dd0c4",
+							"protocol": "https",
+							"host": [
+								"gaius-lex",
+								"pl"
+							],
+							"path": [
+								"backend",
+								"api",
+								"v1",
+								"poll",
+								"answer",
+								"38c3082b-5ce1-430e-b31a-1cba288dd0c4"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "Text",
+					"header": [
+						{
+							"key": "Allow",
+							"value": "GET, HEAD, OPTIONS"
+						},
+						{
+							"key": "Alt-Svc",
+							"value": "h3=\":443\"; ma=2592000"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 27 Aug 2025 07:19:26 GMT"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Server",
+							"value": "uvicorn"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie, origin"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "Content-Length",
+							"value": "1711"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"answer\": \"Wyjaśnię Ci to w prosty sposób, krok po kroku.\\n\\n## Czym jest ASI i dlaczego wymaga zgłoszenia?\\n\\n**ASI (Alternatywna Spółka Inwestycyjna)** to rodzaj funduszu inwestycyjnego, który zbiera pieniądze od wielu inwestorów i lokuje je zgodnie z określoną strategią. To nie jest zwykła spółka - to specjalny wehikuł inwestycyjny podlegający szczególnym regulacjom.\\n\\n**Zarządzanie ASI** oznacza podejmowanie kluczowych decyzji inwestycyjnych - co kupić, co sprzedać, jak zarządzać ryzykiem. To ogromna odpowiedzialność, bo chodzi o pieniądze innych ludzi.\\n\\n## Dlaczego trzeba zgłaszać zamiar zarządzania?\\n\\nWyobraź sobie, że chcesz zostać lekarzem. Nie możesz po prostu zacząć leczyć ludzi - musisz najpierw uzyskać dyplom i licencję. Podobnie jest z zarządzaniem funduszami.\\n\\n**Art. 70w ustawy o funduszach inwestycyjnych** wymaga, żeby każdy, kto chce zarządzać ASI, najpierw powiadomił o tym KNF (Komisję Nadzoru Finansowego). To jak zgłoszenie: \\\"Hej, chcę zarządzać tym funduszem, oto moje kwalifikacje i plan działania\\\".\\n\\n## Co się dzieje, gdy nie zgłosisz zamiaru?\\n\\n### 1. **Prawne konsekwencje**\\n- **Grzywna do 10 milionów złotych** lub **więzienie do 5 lat**\\n- To nie są żarty - to poważne przestępstwo\\n\\n### 2. **Praktyczne problemy**\\n- KNF może odmówić uznania takiego zarządzania\\n- Fundusz może zostać zamknięty\\n- Inwestorzy mogą stracić pieniądze\\n- Ty jako zarządzający możesz być pociągnięty do odpowiedzialności za szkody\\n\\n### 3. **Reputacyjne skutki**\\n- Utrata zaufania na rynku\\n- Problemy z uzyskaniem przyszłych zezwoleń\\n- Kłopoty z partnerami biznesowymi\\n\\n## Przykład z życia\\n\\nWyobraź sobie sytuację: Masz spółkę i myślisz \\\"Świetnie, przejmę zarządzanie tym funduszem, zacznę inwestować, a potem zgłoszę to do KNF\\\". \\n\\n**To jak prowadzenie samochodu bez prawa jazdy** - może przez jakiś czas nikt Cię nie złapie, ale gdy już to się stanie, konsekwencje będą dotkliwe. A w przypadku funduszy inwestycyjnych, \\\"policja\\\" (czyli KNF) jest bardzo czujna.\\n\\n## Czy są jakieś wyjątki?\\n\\n**Nie ma żadnych wyjątków.** Przepisy są jednoznaczne - każde zarządzanie ASI wymaga uprzedniego zgłoszenia. To nie jest kwestia interpretacji czy dobrej woli - to bezwzględny obowiązek prawny.\\n\\n## Jak to wygląda w praktyce?\\n\\n1. **Najpierw zgłaszasz** zamiar zarządzania do KNF\\n2. **Czekasz na odpowiedź** (zwykle miesiąc)\\n3. **Dopiero potem** możesz rozpocząć zarządzanie\\n\\nTo jak z budową domu - najpierw pozwolenie na budowę, potem budowa, a nie na odwrót.\\n\\n## Dlaczego te przepisy istnieją?\\n\\nChodzi o **ochronę inwestorów**. Fundusze inwestycyjne to nie zabawa - to poważny biznes, gdzie błędy mogą kosztować ludzi oszczędności życia. Dlatego państwo chce mieć pewność, że osoby zarządzające funduszami:\\n- Mają odpowiednie kwalifikacje\\n- Działają zgodnie z prawem  \\n- Są pod nadzorem\\n\\n## Podsumowanie\\n\\n**Odpowiedź na Twoje pytanie jest jednoznaczna: NIE, nie można przejąć zarządzania ASI bez uprzedniego zgłoszenia do KNF.**\\n\\nTo nie jest kwestia \\\"można spróbować\\\" czy \\\"może się uda\\\". To jasny zakaz prawny z poważnymi konsekwencjami. Jeśli planujesz zarządzać ASI, **zawsze** najpierw zgłoś to do KNF - to jedyna legalna droga.\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Theses analysis",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Api-Key {{GaiusLexApiKey}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\": \"Po wypadku drogowym kierowca ucieka z miejsca zdarzenia, co jest przestępstwem. Bał się konsekwencji prawnych i nie chciał ponosić odpowiedzialności, tym bardziej że kierowca był pijany, co zaostrzyłoby karę. Popełnił przez to szereg wykroczeń, w tym nieudzielenie pomocy poszkodowanemu oraz niezgłoszenie wypadku odpowiednim służbom.\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gaius-lex.pl/backend/api/v1/poll/theses-analysis",
+					"protocol": "https",
+					"host": [
+						"gaius-lex",
+						"pl"
+					],
+					"path": [
+						"backend",
+						"api",
+						"v1",
+						"poll",
+						"theses-analysis"
+					]
+				},
+				"description": "## Endpoint: Theses Analysis\n\nThis endpoint is used to submit a text for analysis related to a traffic accident. Upon successful submission, it processes the provided text and returns a unique request identifier.\n\n### Request\n\n- **Method**: POST\n    \n- **URL**: `https://gaius-lex.pl/backend/api/v1/poll/theses-analysis`\n    \n- **Content-Type**: application/json\n    \n\n#### Request Body\n\nThe request body must be a JSON object containing the following parameter:\n\n- **text** (string): A string representing the text to be analyzed. For example, it can describe an incident involving a traffic accident.\n    \n\n### Response\n\nUpon successful processing of the request, the server will respond with:\n\n- **Status Code**: 202 (Accepted)\n    \n- **Content-Type**: application/json\n    \n\n#### Response Body\n\nThe response will be a JSON object containing:\n\n- **request_id** (string): A unique identifier for the request. This can be used to track the status of the analysis.\n    \n\n### Example\n\n#### Request Example\n\n``` json\n{\n  \"text\": \"Po wypadku drogowym kierowca u ...\"\n}\n\n ```\n\n#### Response Example\n\n``` json\n{\n  \"request_id\": \"\"\n}\n\n ```\n\nThis endpoint is useful for applications that need to analyze text related to traffic incidents, providing a mechanism to submit and track the analysis request."
+			},
+			"response": [
+				{
+					"name": "Theses analysis",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Api-Key {{GaiusLexApiKey}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Po wypadku drogowym kierowca ucieka z miejsca zdarzenia, co jest przestępstwem. Bał się konsekwencji prawnych i nie chciał ponosić odpowiedzialności, tym bardziej że kierowca był pijany, co zaostrzyłoby karę. Popełnił przez to szereg wykroczeń, w tym nieudzielenie pomocy poszkodowanemu oraz niezgłoszenie wypadku odpowiednim służbom.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gaius-lex.pl/backend/api/v1/poll/theses-analysis",
+							"protocol": "https",
+							"host": [
+								"gaius-lex",
+								"pl"
+							],
+							"path": [
+								"backend",
+								"api",
+								"v1",
+								"poll",
+								"theses-analysis"
+							]
+						}
+					},
+					"status": "Accepted",
+					"code": 202,
+					"_postman_previewlanguage": "Text",
+					"header": [
+						{
+							"key": "Allow",
+							"value": "POST, OPTIONS"
+						},
+						{
+							"key": "Alt-Svc",
+							"value": "h3=\":443\"; ma=2592000"
+						},
+						{
+							"key": "Content-Length",
+							"value": "53"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 26 Aug 2025 18:22:43 GMT"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Server",
+							"value": "uvicorn"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie, origin"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"request_id\": \"facea669-58d4-4bfa-bf32-8907c0c1c026\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Theses analysis retrieve",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Api-Key {{GaiusLexApiKey}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gaius-lex.pl/backend/api/v1/poll/theses-analysis/facea669-58d4-4bfa-bf32-8907c0c1c026",
+					"protocol": "https",
+					"host": [
+						"gaius-lex",
+						"pl"
+					],
+					"path": [
+						"backend",
+						"api",
+						"v1",
+						"poll",
+						"theses-analysis",
+						"facea669-58d4-4bfa-bf32-8907c0c1c026"
+					]
+				},
+				"description": "## Endpoint Description\n\nThis API endpoint retrieves the analysis of a specific thesis based on the provided identifier. It is designed to return detailed information about the thesis, including its proof, thesis statement, and antithesis.\n\n### Request\n\n- **Method:** GET\n    \n- **URL:** `https://gaius-lex.pl/backend/api/v1/poll/theses-analysis/{thesis_id}`\n    \n\n#### Path Parameters\n\n- `thesis_id` (string): A unique identifier for the thesis analysis you wish to retrieve. In the example provided, the thesis ID is `facea669-58d4-4bfa-bf32-8907c0c1c026`.\n    \n\n### Response\n\nUpon a successful request, the API will return a JSON object with the following structure:\n\n- **code** (integer): A status code indicating the result of the request. A value of `0` typically signifies success.\n    \n- **text** (string): A message related to the request's status. This may be empty or contain additional information.\n    \n- **theses_analysis** (array): An array of objects containing the analysis details for the requested thesis. Each object in the array includes:\n    \n    - **proof** (string): The supporting evidence for the thesis.\n        \n    - **thesis** (string): The main thesis statement.\n        \n    - **antithesis** (string): The counterargument or opposing view.\n        \n\n### Example Response\n\n``` json\n{\n    \"code\": 200,\n    \"text\": \"Po wypadku drogowym kierowca ucieka z miejsca zdarzenia, co jest przestępstwem. Bał się konsekwencji prawnych i nie chciał ponosić odpowiedzialności, tym bardziej że kierowca był pijany, co zaostrzyłoby karę. Popełnił przez to szereg wykroczeń, w tym nieudzielenie pomocy poszkodowanemu oraz niezgłoszenie wypadku odpowiednim służbom.\",\n    \"theses_analysis\": [\n        {\n            \"proof\": \"Po wypadku drogowym kierowca ucieka z miejsca zdarzenia, co jest przestępstwem.\",\n            \"thesis\": \"Ucieczka z miejsca wypadku drogowego jest przestępstwem.\",\n            \"antithesis\": \"Ucieczka z miejsca wypadku drogowego nie jest przestępstwem.\"\n        },\n        {\n            \"proof\": \"Popełnił przez to szereg wykroczeń, w tym nieudzielenie pomocy poszkodowanemu.\",\n            \"thesis\": \"Nieudzielenie pomocy poszkodowanemu w wypadku drogowym jest wykroczeniem.\",\n            \"antithesis\": \"Nieudzielenie pomocy poszkodowanemu w wypadku drogowym nie jest wykroczeniem.\"\n        },\n        {\n            \"proof\": \"Popełnił przez to szereg wykroczeń, w tym (...) niezgłoszenie wypadku odpowiednim służbom.\",\n            \"thesis\": \"Niezgłoszenie wypadku drogowemu odpowiednim służbom jest wykroczeniem.\",\n            \"antithesis\": \"Niezgłoszenie wypadku drogowemu odpowiednim służbom nie jest wykroczeniem.\"\n        }\n    ]\n}\n\n ```\n\n### Usage Notes\n\n- Ensure that the `thesis_id` is valid to receive the corresponding analysis.\n    \n- The response will vary based on the thesis being analyzed; however, the structure will remain consistent.\n    \n- Check the `code` field in the response to determine if the request was successful and handle errors accordingly."
+			},
+			"response": [
+				{
+					"name": "Theses analysis retrieve",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Api-Key {{GaiusLexApiKey}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Po wypadku drogowym kierowca ucieka z miejsca zdarzenia, co jest przestępstwem. Bał się konsekwencji prawnych i nie chciał ponosić odpowiedzialności, tym bardziej że kierowca był pijany, co zaostrzyłoby karę. Popełnił przez to szereg wykroczeń, w tym nieudzielenie pomocy poszkodowanemu oraz niezgłoszenie wypadku odpowiednim służbom.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gaius-lex.pl/backend/api/v1/poll/theses-analysis/facea669-58d4-4bfa-bf32-8907c0c1c026",
+							"protocol": "https",
+							"host": [
+								"gaius-lex",
+								"pl"
+							],
+							"path": [
+								"backend",
+								"api",
+								"v1",
+								"poll",
+								"theses-analysis",
+								"facea669-58d4-4bfa-bf32-8907c0c1c026"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "Text",
+					"header": [
+						{
+							"key": "Allow",
+							"value": "GET, HEAD, OPTIONS"
+						},
+						{
+							"key": "Alt-Svc",
+							"value": "h3=\":443\"; ma=2592000"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 26 Aug 2025 18:22:49 GMT"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Server",
+							"value": "uvicorn"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie, origin"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "Content-Length",
+							"value": "384"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"code\": 200,\n    \"text\": \"Po wypadku drogowym kierowca ucieka z miejsca zdarzenia, co jest przestępstwem. Bał się konsekwencji prawnych i nie chciał ponosić odpowiedzialności, tym bardziej że kierowca był pijany, co zaostrzyłoby karę. Popełnił przez to szereg wykroczeń, w tym nieudzielenie pomocy poszkodowanemu oraz niezgłoszenie wypadku odpowiednim służbom.\",\n    \"theses_analysis\": [\n        {\n            \"proof\": \"Po wypadku drogowym kierowca ucieka z miejsca zdarzenia, co jest przestępstwem.\",\n            \"thesis\": \"Ucieczka z miejsca wypadku drogowego jest przestępstwem.\",\n            \"antithesis\": \"Ucieczka z miejsca wypadku drogowego nie jest przestępstwem.\"\n        },\n        {\n            \"proof\": \"Popełnił przez to szereg wykroczeń, w tym nieudzielenie pomocy poszkodowanemu.\",\n            \"thesis\": \"Nieudzielenie pomocy poszkodowanemu w wypadku drogowym jest wykroczeniem.\",\n            \"antithesis\": \"Nieudzielenie pomocy poszkodowanemu w wypadku drogowym nie jest wykroczeniem.\"\n        },\n        {\n            \"proof\": \"Popełnił przez to szereg wykroczeń, w tym (...) niezgłoszenie wypadku odpowiednim służbom.\",\n            \"thesis\": \"Niezgłoszenie wypadku drogowemu odpowiednim służbom jest wykroczeniem.\",\n            \"antithesis\": \"Niezgłoszenie wypadku drogowemu odpowiednim służbom nie jest wykroczeniem.\"\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Clauses abusivity analysis",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Api-Key {{GaiusLexApiKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\": \"Bank udziela K. Kredytu w kwocie (…) złotych polskich (słownie: … złotych polskich), indeksowanego kursem CHF zwanego dalej „Kredytem” na warunkach określonych w Umowie a K. zobowiązuje się do wykorzystania Kredytu zgodnie z postanowieniem Umowy oraz zapłaty Bankowi prowizji, opłat i innych należności wynikających z Umowy. Na kwotę Kredytu składa się kwota pozostawiona do dyspozycji K. w wysokości (…) złotych polskich, przeznaczona na realizację celu określonego w |Numer| oraz kwota należnej składki z tytułu ubezpieczenia od ryzyka utraty pracy opisanego w |Numer|, w wysokości (…) złotych polskich, która zostanie doliczona do salda Kredytu, zgodnie z zasadami określonymi w |Numer|, następnie saldo walutowe przeliczane jest dziennie na złote polskie według kursu sprzedaży waluty do której indeksowany jest Kredyt, podanego w Tabeli kursów kupna/sprzedaży dla kredytów hipotecznych udzielanych przez GE Money Bank S.A., opisanej szczegółowo w |Numer|. \\nKażdorazowo wypłacana kwota polskich złotych polskich, zostanie przeliczona na walutę, do której indeksowany jest Kredyt według kursu kupna waluty Kredytu podanego w Tabeli kursów kupna/sprzedaży dla kredytów hipotecznych udzielanych przez GE Money Bank S.A., obowiązującego w dniu dokonania wypłaty przez Bank.\\n Uruchomienie Kredytu nastąpi jednorazowo w wysokości nie większej niż (…) PLN (słownie: ....) w następujący sposób: \\n\\n 1) z kwoty kredytu zostanie pobrana składka ubezpieczenia spłaty kredytu w T., o której mowa w |Numer|\\n 2) w wysokości określonej w akcie notarialnym ostatecznej umowy kupna-sprzedaży Kredytowanej Nieruchomości (zawartej pomiędzy Z. i K.), nie więcej jednak niż (…) PLN stanowiącej różnicę między ceną nabycia Kredytowanej Nieruchomości a wniesionym Wkładem własnym, na rachunek bankowy Z. wskazany w tym akcie notarialnym. \"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gaius-lex.pl/backend/api/v1/poll/abusivity",
+					"protocol": "https",
+					"host": [
+						"gaius-lex",
+						"pl"
+					],
+					"path": [
+						"backend",
+						"api",
+						"v1",
+						"poll",
+						"abusivity"
+					]
+				},
+				"description": "## POST /poll/abusivity\n\nThis endpoint is used to submit a text for analysis regarding abusivity. The request is designed to allow users to send a piece of text which will be evaluated by the backend service.\n\n### Request Body\n\nThe request body must be a JSON object containing the following parameter:\n\n- **text** (string): The text to be analyzed for abusivity. This should be a complete sentence or a paragraph that you want to evaluate.\n    \n\n#### Example Request\n\n``` json\n{\n  \"text\": \"Bank udziela K. Kredytu w kwoc ...\"\n}\n\n ```\n\n### Response\n\nUpon successful processing of the request, the server will respond with a status code of `202`, indicating that the request has been accepted for processing. The response will be in JSON format and will include:\n\n- **request_id** (string): A unique identifier for the request. This can be used for tracking the status of the analysis.\n    \n\n#### Example Response\n\n``` json\n{\n  \"request_id\": \"12345-abcde\"\n}\n\n ```\n\n### Notes\n\n- Ensure that the text provided is clear and relevant to the analysis for the best results.\n    \n- The `request_id` can be used to check the status of the analysis in subsequent requests, if such functionality is provided by the API."
+			},
+			"response": [
+				{
+					"name": "Clauses abusivity analysis",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Api-Key {{GaiusLexApiKey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Bank udziela K. Kredytu w kwocie (…) złotych polskich (słownie: … złotych polskich), indeksowanego kursem CHF zwanego dalej „Kredytem” na warunkach określonych w Umowie a K. zobowiązuje się do wykorzystania Kredytu zgodnie z postanowieniem Umowy oraz zapłaty Bankowi prowizji, opłat i innych należności wynikających z Umowy. Na kwotę Kredytu składa się kwota pozostawiona do dyspozycji K. w wysokości (…) złotych polskich, przeznaczona na realizację celu określonego w |Numer| oraz kwota należnej składki z tytułu ubezpieczenia od ryzyka utraty pracy opisanego w |Numer|, w wysokości (…) złotych polskich, która zostanie doliczona do salda Kredytu, zgodnie z zasadami określonymi w |Numer|, następnie saldo walutowe przeliczane jest dziennie na złote polskie według kursu sprzedaży waluty do której indeksowany jest Kredyt, podanego w Tabeli kursów kupna/sprzedaży dla kredytów hipotecznych udzielanych przez GE Money Bank S.A., opisanej szczegółowo w |Numer|. \\nKażdorazowo wypłacana kwota polskich złotych polskich, zostanie przeliczona na walutę, do której indeksowany jest Kredyt według kursu kupna waluty Kredytu podanego w Tabeli kursów kupna/sprzedaży dla kredytów hipotecznych udzielanych przez GE Money Bank S.A., obowiązującego w dniu dokonania wypłaty przez Bank.\\n Uruchomienie Kredytu nastąpi jednorazowo w wysokości nie większej niż (…) PLN (słownie: ....) w następujący sposób: \\n\\n 1) z kwoty kredytu zostanie pobrana składka ubezpieczenia spłaty kredytu w T., o której mowa w |Numer|\\n 2) w wysokości określonej w akcie notarialnym ostatecznej umowy kupna-sprzedaży Kredytowanej Nieruchomości (zawartej pomiędzy Z. i K.), nie więcej jednak niż (…) PLN stanowiącej różnicę między ceną nabycia Kredytowanej Nieruchomości a wniesionym Wkładem własnym, na rachunek bankowy Z. wskazany w tym akcie notarialnym. \"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gaius-lex.pl/backend/api/v1/poll/abusivity",
+							"protocol": "https",
+							"host": [
+								"gaius-lex",
+								"pl"
+							],
+							"path": [
+								"backend",
+								"api",
+								"v1",
+								"poll",
+								"abusivity"
+							]
+						}
+					},
+					"status": "Accepted",
+					"code": 202,
+					"_postman_previewlanguage": "Text",
+					"header": [
+						{
+							"key": "Allow",
+							"value": "POST, OPTIONS"
+						},
+						{
+							"key": "Alt-Svc",
+							"value": "h3=\":443\"; ma=2592000"
+						},
+						{
+							"key": "Content-Length",
+							"value": "53"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 27 Aug 2025 07:41:43 GMT"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Server",
+							"value": "uvicorn"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie, origin"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"request_id\": \"c85320aa-d02d-4cf8-80ba-b7506844d2b1\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Clauses abusivity analysis retrieve",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Api-Key {{GaiusLexApiKey}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gaius-lex.pl/backend/api/v1/poll/abusivity/ffb2a338-f04e-4843-ad99-1e526be3c640",
+					"protocol": "https",
+					"host": [
+						"gaius-lex",
+						"pl"
+					],
+					"path": [
+						"backend",
+						"api",
+						"v1",
+						"poll",
+						"abusivity",
+						"ffb2a338-f04e-4843-ad99-1e526be3c640"
+					]
+				},
+				"description": "## Endpoint Description\n\nThis API endpoint retrieves the abusivity risk analysis for a specific identifier. It is designed to return information regarding the potential abusivity associated with a particular case, including relevant arguments and case numbers.\n\n### Request\n\n- **Method:** GET\n    \n- **URL:** `https://gaius-lex.pl/backend/api/v1/poll/abusivity/{identifier}`\n    \n\n#### Path Parameters\n\n- `identifier` (string): A unique identifier for the abusivity analysis you wish to retrieve. In the example provided, the identifier is `ffb2a338-f04e-4843-ad99-1e526be3c640`.\n    \n\n### Response\n\nUpon a successful request, the API will return a JSON object with the following structure:\n\n- **text** (string): A message related to the request's status. This may be empty or contain additional information.\n    \n- **abusivity_risk** (array): An array of objects containing the analysis details for the requested identifier. Each object in the array includes:\n    \n    - **part** (string): A specific part related to the abusivity analysis.\n        \n    - **arguments** (string): The arguments associated with the abusivity risk.\n        \n    - **case_number** (string): The case number relevant to the analysis.\n        \n\n### Example Response\n\n``` json\n{\n    \"text\": \"\",\n    \"abusivity_risk\": [\n        {\n            \"part\": \"\",\n            \"arguments\": \"\",\n            \"case_number\": \"\"\n        }\n    ]\n}\n\n ```\n\n### Usage Notes\n\n- Ensure that the `identifier` is valid to receive the corresponding analysis.\n    \n- The response will vary based on the identifier being analyzed; however, the structure will remain consistent.\n    \n- The `text` field may provide additional context or status information regarding the request."
+			},
+			"response": [
+				{
+					"name": "Clauses abusivity still being processed",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Api-Key {{GaiusLexApiKey}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gaius-lex.pl/backend/api/v1/poll/abusivity/c85320aa-d02d-4cf8-80ba-b7506844d2b1",
+							"protocol": "https",
+							"host": [
+								"gaius-lex",
+								"pl"
+							],
+							"path": [
+								"backend",
+								"api",
+								"v1",
+								"poll",
+								"abusivity",
+								"c85320aa-d02d-4cf8-80ba-b7506844d2b1"
+							]
+						}
+					},
+					"status": "Accepted",
+					"code": 202,
+					"_postman_previewlanguage": "Text",
+					"header": [
+						{
+							"key": "Allow",
+							"value": "GET, HEAD, OPTIONS"
+						},
+						{
+							"key": "Alt-Svc",
+							"value": "h3=\":443\"; ma=2592000"
+						},
+						{
+							"key": "Content-Length",
+							"value": "62"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 27 Aug 2025 07:43:35 GMT"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Server",
+							"value": "uvicorn"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie, origin"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Your text is still being processed. Please wait.\"\n}"
+				},
+				{
+					"name": "Clauses abusivity analysis retrieve successful",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Api-Key {{GaiusLexApiKey}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gaius-lex.pl/backend/api/v1/poll/abusivity/ffb2a338-f04e-4843-ad99-1e526be3c640",
+							"protocol": "https",
+							"host": [
+								"gaius-lex",
+								"pl"
+							],
+							"path": [
+								"backend",
+								"api",
+								"v1",
+								"poll",
+								"abusivity",
+								"ffb2a338-f04e-4843-ad99-1e526be3c640"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Allow",
+							"value": "GET, HEAD, OPTIONS"
+						},
+						{
+							"key": "Alt-Svc",
+							"value": "h3=\":443\"; ma=2592000"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 27 Aug 2025 12:25:01 GMT"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Server",
+							"value": "uvicorn"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie, origin"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"text\": \"Bank udziela K. Kredytu w kwocie (…) złotych polskich (słownie: … złotych polskich), indeksowanego kursem CHF zwanego dalej „Kredytem” na warunkach określonych w Umowie a K. zobowiązuje się do wykorzystania Kredytu zgodnie z postanowieniem Umowy oraz zapłaty Bankowi prowizji, opłat i innych należności wynikających z Umowy. Na kwotę Kredytu składa się kwota pozostawiona do dyspozycji K. w wysokości (…) złotych polskich, przeznaczona na realizację celu określonego w |Numer| oraz kwota należnej składki z tytułu ubezpieczenia od ryzyka utraty pracy opisanego w |Numer|, w wysokości (…) złotych polskich, która zostanie doliczona do salda Kredytu, zgodnie z zasadami określonymi w |Numer|, następnie saldo walutowe przeliczane jest dziennie na złote polskie według kursu sprzedaży waluty do której indeksowany jest Kredyt, podanego w Tabeli kursów kupna/sprzedaży dla kredytów hipotecznych udzielanych przez GE Money Bank S.A., opisanej szczegółowo w |Numer|. \\nKażdorazowo wypłacana kwota polskich złotych polskich, zostanie przeliczona na walutę, do której indeksowany jest Kredyt według kursu kupna waluty Kredytu podanego w Tabeli kursów kupna/sprzedaży dla kredytów hipotecznych udzielanych przez GE Money Bank S.A., obowiązującego w dniu dokonania wypłaty przez Bank.\\n Uruchomienie Kredytu nastąpi jednorazowo w wysokości nie większej niż (…) PLN (słownie: ....) w następujący sposób: \\n\\n 1) z kwoty kredytu zostanie pobrana składka ubezpieczenia spłaty kredytu w T., o której mowa w |Numer|\\n 2) w wysokości określonej w akcie notarialnym ostatecznej umowy kupna-sprzedaży Kredytowanej Nieruchomości (zawartej pomiędzy Z. i K.), nie więcej jednak niż (…) PLN stanowiącej różnicę między ceną nabycia Kredytowanej Nieruchomości a wniesionym Wkładem własnym, na rachunek bankowy Z. wskazany w tym akcie notarialnym. \",\n    \"abusivity_risk\": [\n        {\n            \"part\": \"Zgodnie z § 7 ust. 2 zdanie 4: Kazdorazowo wypłacona kwota złotych polskich zostanie przeliczona na walute, do ktorej indeksowany jest Kredyt, według kursu kupna waluty Kredytu podanego w Tabeli kursow kupna/sprzedazy dla kredytow hipotecznych udzielanych przez Bank S.A.,  obowiazujacego w dniu dokonania wypłaty przez Bank.  Zgodnie z § 10 Niezwłocznie po wypłacie kredytu bank przesle Kredytobiorcy oraz jezeli było ustanowione poreczenie, takze poreczycielom harmonogram spłat kredytu.\",\n            \"arguments\": \"W orzeczeniu Sądu Okręgowego w Gliwicach (sygn. akt: I C 732/21) stwierdzono, że umowa kredytu hipotecznego indeksowanego do waluty obcej (CHF) zawierała klauzule abuzywne. Sąd uznał, że postanowienia umowy dotyczące indeksacji kredytu do waluty obcej i ustalania kursów walut przez bank były niejednoznaczne i naruszały równowagę interesów stron, rażąco naruszając interesy konsumentów.\\n\\nW szczególności, sąd zwrócił uwagę na brak obiektywnych kryteriów ustalania kursów walut przez bank oraz na fakt, że kredytobiorcy nie mieli realnej możliwości wpływu na te postanowienia. Ponadto, sąd stwierdził, że bank nie przedstawił kredytobiorcom pełnej informacji o ryzyku związanym z kredytem indeksowanym do waluty obcej, co stanowiło naruszenie obowiązku informacyjnego.\\n\\nW konsekwencji, sąd uznał umowę za nieważną z powodu zawartych w niej klauzul abuzywnych.\\n\\nPodobna klauzula, jak ta przedstawiona w pytaniu, dotycząca przeliczania kwoty kredytu na walutę obcą według kursu ustalanego przez bank, została uznana za niedozwoloną w tym orzeczeniu. Sąd stwierdził, że taka klauzula narusza dobre obyczaje i rażąco narusza interesy konsumentów, ponieważ pozostawia bankowi pełną dowolność w ustalaniu kursów walut, co może prowadzić do nieuzasadnionych korzyści kosztem konsumenta.\\n\\nDlatego też, klauzula taka jak ta przedstawiona w pytaniu jest niedozwolona w świetle orzeczenia Sądu Okręgowego w Gliwicach.\",\n            \"case_number\": \"I C 732/21\"\n        },\n        {\n            \"part\": \"Z § 1 ust. 1 zd.1 umowy (k.29) wynika bowiem, że \\\"Bank udziela kredytobiorcy kredytu w kwocie 475.640,00 złotych polskich, indeksowanego kursem CHF. W dniu wypłaty saldo jest wyrażone w walucie, do której indeksowany jest Kredyt według kursu kupna waluty, do której indeksowany jest kredyt podanego w Tabeli kursów kupna/sprzedaży dla kredytów hipotecznych udzielanych przez Bank, opisanej szczegółowo w § 17, następnie saldo walutowe przeliczane jest dziennie na złote polskie\",\n            \"arguments\": \"W orzeczeniu Sądu Apelacyjnego w Gdańsku z dnia 21 października 2022 r. (sygn. akt V ACa 356/22) stwierdzono, że klauzule indeksacyjne w umowie kredytu hipotecznego były niedozwolone. Sąd uznał, że postanowienia umowy dotyczące indeksacji kredytu do waluty obcej (CHF) były sformułowane w sposób niejednoznaczny i naruszały dobre obyczaje, rażąco naruszając interesy konsumenta. W szczególności, Sąd zwrócił uwagę na brak przejrzystości w określaniu kursów walutowych oraz brak informacji o ryzyku walutowym.\\n\\nW konsekwencji, Sąd uznał umowę kredytu za nieważną, stwierdzając, że klauzule indeksacyjne były abuzywne i nie wiązały konsumenta. Sąd podkreślił, że bank nie poinformował kredytobiorców o ryzyku związanym ze zmianami kursów walutowych, co stanowiło naruszenie obowiązku informacyjnego.\\n\\nW odniesieniu do klauzuli przedstawionej w pytaniu, która określa mechanizm indeksacji kredytu do waluty obcej (CHF) i odsyła do tabeli kursów walutowych banku, Sąd uznałby ją za niedozwoloną z powodu braku przejrzystości i niejednoznaczności. Klauzula ta nie określała bowiem w sposób jasny i zrozumiały dla konsumenta, jak będą ustalane kursy walutowe, co naruszało zasady dobrych obyczajów i rażąco naruszało interesy konsumenta.\\n\\nPodsumowując, klauzula taka jak przedstawiona w pytaniu jest niedozwolona, ponieważ narusza zasady ochrony konsumenta i dobre obyczaje, a jej niejednoznaczność i brak przejrzystości powodują, że nie wiąże ona konsumenta.\",\n            \"case_number\": \"V ACa 356/22\"\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Alignment rule extraction",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Api-Key {{GaiusLexApiKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\": \"Umowa pozoruje stosunek pracy\\nBrak wymaganych elementów formalnych umowy zlecenia\\nObecność sprzecznych lub niespójnych zapisów\\nBrak klauzuli RODO / powierzenia danych\\nBrak klauzuli poufności (NDA)\\nNieprzejrzyste lub ryzykowne zapisy dotyczące wynagrodzenia\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gaius-lex.pl/backend/api/v1/alignment/rule-extraction",
+					"protocol": "https",
+					"host": [
+						"gaius-lex",
+						"pl"
+					],
+					"path": [
+						"backend",
+						"api",
+						"v1",
+						"alignment",
+						"rule-extraction"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Alignment rule extraction",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Api-Key {{GaiusLexApiKey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Umowa pozoruje stosunek pracy\\nBrak wymaganych elementów formalnych umowy zlecenia\\nObecność sprzecznych lub niespójnych zapisów\\nBrak klauzuli RODO / powierzenia danych\\nBrak klauzuli poufności (NDA)\\nNieprzejrzyste lub ryzykowne zapisy dotyczące wynagrodzenia\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gaius-lex.pl/backend/api/v1/alignment/rule-extraction",
+							"protocol": "https",
+							"host": [
+								"gaius-lex",
+								"pl"
+							],
+							"path": [
+								"backend",
+								"api",
+								"v1",
+								"alignment",
+								"rule-extraction"
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"rules\": [\n        {\n            \"rule\": \"umowa nie może pozorować stosunku pracy\",\n            \"mode\": \"must_not_find\"\n        },\n        {\n            \"rule\": \"wymagane elementy formalne umowy zlecenia\",\n            \"mode\": \"must_find\"\n        },\n        {\n            \"rule\": \"brak sprzecznych lub niespójnych zapisów\",\n            \"mode\": \"must_not_find\"\n        },\n        {\n            \"rule\": \"klauzula RODO / powierzenia danych\",\n            \"mode\": \"must_find\"\n        },\n        {\n            \"rule\": \"klauzula poufności (NDA)\",\n            \"mode\": \"must_find\"\n        },\n        {\n            \"rule\": \"przejrzyste i bezpieczne zapisy dotyczące wynagrodzenia\",\n            \"mode\": \"must_find\"\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Alignment polling",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Api-Key {{GaiusLexApiKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"rules\": [\n        {\n            \"rule\": \"umowa nie może pozorować stosunku pracy\",\n            \"mode\": \"must_not_find\"\n        },\n        {\n            \"rule\": \"wymagane elementy formalne umowy zlecenia\",\n            \"mode\": \"must_find\"\n        },\n        {\n            \"rule\": \"brak sprzecznych lub niespójnych zapisów\",\n            \"mode\": \"must_not_find\"\n        },\n        {\n            \"rule\": \"klauzula RODO / powierzenia danych\",\n            \"mode\": \"must_find\"\n        },\n        {\n            \"rule\": \"klauzula poufności (NDA)\",\n            \"mode\": \"must_find\"\n        },\n        {\n            \"rule\": \"przejrzyste i bezpieczne zapisy dotyczące wynagrodzenia\",\n            \"mode\": \"must_find\"\n        }\n    ],\n    \"text\": \"**UMOWA ZLECENIA**\\n\\nzawarta w dniu 25 czerwca 2025 r. w Warszawie, pomiędzy:\\n\\n**Alpha Solutions Sp. z o.o.** z siedzibą w Warszawie (00-000), ul. Kwiatowa 1, wpisaną do KRS pod numerem 0000123456, NIP: 1234567890, REGON: 987654321, reprezentowaną przez Prezesa Zarządu Jana Kowalskiego, zwaną dalej „Zleceniodawcą”,\\n\\na\\n\\n**Karoliną Nowak**, zamieszkałą w Krakowie (30-000), ul. Lipowa 2 m. 4, PESEL: 90010112345, zwaną dalej „Zleceniobiorcą”,\\n\\nłącznie zwanymi „Stronami”, a każda z osobna „Stroną”.\\n\\n---\\n\\n### §1. Przedmiot umowy\\n\\n1. Zleceniodawca zleca, a Zleceniobiorca zobowiązuje się do wykonania usług doradczych w zakresie analizy danych finansowych oraz wsparcia zespołu sprzedaży w codziennej obsłudze klientów.\\n    \\n2. Zleceniobiorca wykonuje zlecenie samodzielnie, w sposób niezależny, z należytą starannością, bez podległości służbowej wobec Zleceniodawcy.\\n    \\n3. Zlecenie będzie wykonywane w siedzibie Zleceniodawcy w godzinach 9:00–17:00 w dni robocze.\\n    \\n\\n---\\n\\n### §2. Termin\\n\\nUmowa zostaje zawarta na czas określony od dnia 1 lipca 2025 r. do dnia 30 września 2025 r.\\n\\n---\\n\\n### §3. Wynagrodzenie\\n\\n1. Za wykonanie zlecenia Zleceniobiorcy przysługuje wynagrodzenie w wysokości 3000 zł brutto miesięcznie.\\n    \\n2. Wynagrodzenie zostanie wypłacone po zakończeniu każdego zlecenia, na podstawie zestawienia godzin pracy.\\n    \\n3. Wynagrodzenie może ulec zmianie w zależności od stopnia zaangażowania Zleceniobiorcy, wedle uznania Zleceniodawcy.\\n    \\n\\n---\\n\\n### §4. Poufność\\n\\nZleceniobiorca zobowiązuje się do zachowania w poufności wszelkich informacji dotyczących działalności Zleceniodawcy, uzyskanych w związku z wykonywaniem niniejszej umowy, zarówno w trakcie jej trwania, jak i po jej rozwiązaniu.\\n\\n---\\n\\n### §5. Dane osobowe\\n\\n1. Zleceniobiorca oświadcza, że zapoznał się z informacją o przetwarzaniu danych osobowych.\\n    \\n2. W przypadku przetwarzania danych osobowych klientów Zleceniodawcy, Strony zawrą odrębne porozumienie powierzenia danych.\\n    \\n\\n---\\n\\n### §6. Postanowienia końcowe\\n\\n1. Każda zmiana umowy wymaga formy pisemnej pod rygorem nieważności.\\n    \\n2. W sprawach nieuregulowanych zastosowanie mają przepisy Kodeksu cywilnego.\\n    \\n3. Umowa została sporządzona w dwóch jednobrzmiących egzemplarzach, po jednym dla każdej ze Stron.\\n    \\n\\n---\\n\\n**ZLECENIODAWCA**  \\nJan Kowalski\\n\\n**ZLECENIOBIORCA**  \\nKarolina Nowak\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gaius-lex.pl/backend/api/v1/poll/alignment",
+					"protocol": "https",
+					"host": [
+						"gaius-lex",
+						"pl"
+					],
+					"path": [
+						"backend",
+						"api",
+						"v1",
+						"poll",
+						"alignment"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Alignment polling",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Api-Key {{GaiusLexApiKey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"rules\": [\n        {\n            \"rule\": \"umowa nie może pozorować stosunku pracy\",\n            \"mode\": \"must_not_find\"\n        },\n        {\n            \"rule\": \"wymagane elementy formalne umowy zlecenia\",\n            \"mode\": \"must_find\"\n        },\n        {\n            \"rule\": \"brak sprzecznych lub niespójnych zapisów\",\n            \"mode\": \"must_not_find\"\n        },\n        {\n            \"rule\": \"klauzula RODO / powierzenia danych\",\n            \"mode\": \"must_find\"\n        },\n        {\n            \"rule\": \"klauzula poufności (NDA)\",\n            \"mode\": \"must_find\"\n        },\n        {\n            \"rule\": \"przejrzyste i bezpieczne zapisy dotyczące wynagrodzenia\",\n            \"mode\": \"must_find\"\n        }\n    ],\n    \"text\": \"**UMOWA ZLECENIA**\\n\\nzawarta w dniu 25 czerwca 2025 r. w Warszawie, pomiędzy:\\n\\n**Alpha Solutions Sp. z o.o.** z siedzibą w Warszawie (00-000), ul. Kwiatowa 1, wpisaną do KRS pod numerem 0000123456, NIP: 1234567890, REGON: 987654321, reprezentowaną przez Prezesa Zarządu Jana Kowalskiego, zwaną dalej „Zleceniodawcą”,\\n\\na\\n\\n**Karoliną Nowak**, zamieszkałą w Krakowie (30-000), ul. Lipowa 2 m. 4, PESEL: 90010112345, zwaną dalej „Zleceniobiorcą”,\\n\\nłącznie zwanymi „Stronami”, a każda z osobna „Stroną”.\\n\\n---\\n\\n### §1. Przedmiot umowy\\n\\n1. Zleceniodawca zleca, a Zleceniobiorca zobowiązuje się do wykonania usług doradczych w zakresie analizy danych finansowych oraz wsparcia zespołu sprzedaży w codziennej obsłudze klientów.\\n    \\n2. Zleceniobiorca wykonuje zlecenie samodzielnie, w sposób niezależny, z należytą starannością, bez podległości służbowej wobec Zleceniodawcy.\\n    \\n3. Zlecenie będzie wykonywane w siedzibie Zleceniodawcy w godzinach 9:00–17:00 w dni robocze.\\n    \\n\\n---\\n\\n### §2. Termin\\n\\nUmowa zostaje zawarta na czas określony od dnia 1 lipca 2025 r. do dnia 30 września 2025 r.\\n\\n---\\n\\n### §3. Wynagrodzenie\\n\\n1. Za wykonanie zlecenia Zleceniobiorcy przysługuje wynagrodzenie w wysokości 3000 zł brutto miesięcznie.\\n    \\n2. Wynagrodzenie zostanie wypłacone po zakończeniu każdego zlecenia, na podstawie zestawienia godzin pracy.\\n    \\n3. Wynagrodzenie może ulec zmianie w zależności od stopnia zaangażowania Zleceniobiorcy, wedle uznania Zleceniodawcy.\\n    \\n\\n---\\n\\n### §4. Poufność\\n\\nZleceniobiorca zobowiązuje się do zachowania w poufności wszelkich informacji dotyczących działalności Zleceniodawcy, uzyskanych w związku z wykonywaniem niniejszej umowy, zarówno w trakcie jej trwania, jak i po jej rozwiązaniu.\\n\\n---\\n\\n### §5. Dane osobowe\\n\\n1. Zleceniobiorca oświadcza, że zapoznał się z informacją o przetwarzaniu danych osobowych.\\n    \\n2. W przypadku przetwarzania danych osobowych klientów Zleceniodawcy, Strony zawrą odrębne porozumienie powierzenia danych.\\n    \\n\\n---\\n\\n### §6. Postanowienia końcowe\\n\\n1. Każda zmiana umowy wymaga formy pisemnej pod rygorem nieważności.\\n    \\n2. W sprawach nieuregulowanych zastosowanie mają przepisy Kodeksu cywilnego.\\n    \\n3. Umowa została sporządzona w dwóch jednobrzmiących egzemplarzach, po jednym dla każdej ze Stron.\\n    \\n\\n---\\n\\n**ZLECENIODAWCA**  \\nJan Kowalski\\n\\n**ZLECENIOBIORCA**  \\nKarolina Nowak\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gaius-lex.pl/backend/api/v1/poll/alignment",
+							"protocol": "https",
+							"host": [
+								"gaius-lex",
+								"pl"
+							],
+							"path": [
+								"backend",
+								"api",
+								"v1",
+								"poll",
+								"alignment"
+							]
+						}
+					},
+					"status": "Accepted",
+					"code": 202,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie, origin"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, OPTIONS"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "Content-Length",
+							"value": "53"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Server",
+							"value": "daphne"
+						}
+					],
+					"cookie": [
+						{
+							"expires": "Invalid Date",
+							"domain": "",
+							"path": ""
+						}
+					],
+					"body": "{\n    \"request_id\": \"e1ea999e-8efb-4e15-9b7d-c16df0810d34\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Alignment retrieve",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Api-Key {{GaiusLexApiKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://gaius-lex.pl/backend/api/v1/poll/alignment/f6e369e5-d6fe-494b-b024-6d48eee3619b",
+					"protocol": "https",
+					"host": [
+						"gaius-lex",
+						"pl"
+					],
+					"path": [
+						"backend",
+						"api",
+						"v1",
+						"poll",
+						"alignment",
+						"f6e369e5-d6fe-494b-b024-6d48eee3619b"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Alignment retrieve",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Api-Key {{GaiusLexApiKey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://gaius-lex.pl/backend/api/v1/poll/alignment/f6e369e5-d6fe-494b-b024-6d48eee3619b",
+							"protocol": "https",
+							"host": [
+								"gaius-lex",
+								"pl"
+							],
+							"path": [
+								"backend",
+								"api",
+								"v1",
+								"poll",
+								"alignment",
+								"f6e369e5-d6fe-494b-b024-6d48eee3619b"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie, origin"
+						},
+						{
+							"key": "Allow",
+							"value": "GET, HEAD, OPTIONS"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "Content-Length",
+							"value": "13654"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Server",
+							"value": "daphne"
+						}
+					],
+					"cookie": [
+						{
+							"expires": "Invalid Date",
+							"domain": "",
+							"path": ""
+						}
+					],
+					"body": "{\n    \"text\": \"**UMOWA ZLECENIA**\\n\\nzawarta w dniu 25 czerwca 2025 r. w Warszawie, pomiędzy:\\n\\n**Alpha Solutions Sp. z o.o.** z siedzibą w Warszawie (00-000), ul. Kwiatowa 1, wpisaną do KRS pod numerem 0000123456, NIP: 1234567890, REGON: 987654321, reprezentowaną przez Prezesa Zarządu Jana Kowalskiego, zwaną dalej „Zleceniodawcą”,\\n\\na\\n\\n**Karoliną Nowak**, zamieszkałą w Krakowie (30-000), ul. Lipowa 2 m. 4, PESEL: 90010112345, zwaną dalej „Zleceniobiorcą”,\\n\\nłącznie zwanymi „Stronami”, a każda z osobna „Stroną”.\\n\\n---\\n\\n### §1. Przedmiot umowy\\n\\n1. Zleceniodawca zleca, a Zleceniobiorca zobowiązuje się do wykonania usług doradczych w zakresie analizy danych finansowych oraz wsparcia zespołu sprzedaży w codziennej obsłudze klientów.\\n    \\n2. Zleceniobiorca wykonuje zlecenie samodzielnie, w sposób niezależny, z należytą starannością, bez podległości służbowej wobec Zleceniodawcy.\\n    \\n3. Zlecenie będzie wykonywane w siedzibie Zleceniodawcy w godzinach 9:00–17:00 w dni robocze.\\n    \\n\\n---\\n\\n### §2. Termin\\n\\nUmowa zostaje zawarta na czas określony od dnia 1 lipca 2025 r. do dnia 30 września 2025 r.\\n\\n---\\n\\n### §3. Wynagrodzenie\\n\\n1. Za wykonanie zlecenia Zleceniobiorcy przysługuje wynagrodzenie w wysokości 3000 zł brutto miesięcznie.\\n    \\n2. Wynagrodzenie zostanie wypłacone po zakończeniu każdego zlecenia, na podstawie zestawienia godzin pracy.\\n    \\n3. Wynagrodzenie może ulec zmianie w zależności od stopnia zaangażowania Zleceniobiorcy, wedle uznania Zleceniodawcy.\\n    \\n\\n---\\n\\n### §4. Poufność\\n\\nZleceniobiorca zobowiązuje się do zachowania w poufności wszelkich informacji dotyczących działalności Zleceniodawcy, uzyskanych w związku z wykonywaniem niniejszej umowy, zarówno w trakcie jej trwania, jak i po jej rozwiązaniu.\\n\\n---\\n\\n### §5. Dane osobowe\\n\\n1. Zleceniobiorca oświadcza, że zapoznał się z informacją o przetwarzaniu danych osobowych.\\n    \\n2. W przypadku przetwarzania danych osobowych klientów Zleceniodawcy, Strony zawrą odrębne porozumienie powierzenia danych.\\n    \\n\\n---\\n\\n### §6. Postanowienia końcowe\\n\\n1. Każda zmiana umowy wymaga formy pisemnej pod rygorem nieważności.\\n    \\n2. W sprawach nieuregulowanych zastosowanie mają przepisy Kodeksu cywilnego.\\n    \\n3. Umowa została sporządzona w dwóch jednobrzmiących egzemplarzach, po jednym dla każdej ze Stron.\\n    \\n\\n---\\n\\n**ZLECENIODAWCA**  \\nJan Kowalski\\n\\n**ZLECENIOBIORCA**  \\nKarolina Nowak\",\n    \"result\": {\n        \"rule_1\": {\n            \"original\": \"wymagane elementy formalne umowy zlecenia\",\n            \"matched_text\": \"\",\n            \"critical_gaps\": [],\n            \"critical_issues\": [],\n            \"recommendations\": \"Dokument zawiera wymagane elementy zgodnie z zasadą: wymagane elementy formalne umowy zlecenia\\n\\nZnalezione klauzule: §1. Przedmiot umowy; §2. Termin; §3. Wynagrodzenie\",\n            \"suggested_fixes\": [],\n            \"compliance_score\": 9,\n            \"specific_clauses\": [\n                \"§1. Przedmiot umowy\",\n                \"§2. Termin\",\n                \"§3. Wynagrodzenie\"\n            ],\n            \"compliance_issues\": \"✅ REQUIRED_ELEMENT_PRESENT\",\n            \"detailed_analysis\": {\n                \"recommendations\": \"Nie ma potrzeby wprowadzania zmian, ponieważ dokument spełnia wszystkie wymagane elementy formalne.\",\n                \"document_content\": \"Dokument zawiera następujące elementy formalne umowy zlecenia: strony umowy, przedmiot umowy, termin, wynagrodzenie, poufność, dane osobowe, postanowienia końcowe oraz podpisy stron.\",\n                \"compliance_assessment\": \"Dokument spełnia wszystkie wymagane elementy formalne umowy zlecenia. Zawiera oznaczenie stron, przedmiot umowy, termin, wynagrodzenie, zobowiązania stron oraz formę i liczbę egzemplarzy umowy. Brakuje jedynie określenia miejsca wykonania zlecenia, co nie jest wymagane przez przepisy, ale może być uznane za dobrą praktykę.\"\n            },\n            \"violation_severity\": \"\",\n            \"critical_violations\": []\n        },\n        \"rule_2\": {\n            \"original\": \"klauzula RODO / powierzenia danych\",\n            \"matched_text\": \"§5. Dane osobowe\\n1. Zleceniobiorca oświadcza, że zapoznał się z informacją o przetwarzaniu danych osobowych.\\n2. W przypadku przetwarzania danych osobowych klientów Zleceniodawcy, Strony zawrą odrębne porozumienie powierzenia danych.\",\n            \"critical_gaps\": [],\n            \"critical_issues\": [],\n            \"recommendations\": \"Dokument zawiera wymagane elementy zgodnie z zasadą: klauzula RODO / powierzenia danych\\n\\nZnalezione klauzule: §5.2: W przypadku przetwarzania danych osobowych klientów Zleceniodawcy, Strony zawrą odrębne porozumienie powierzenia danych.\",\n            \"suggested_fixes\": [],\n            \"compliance_score\": 8,\n            \"specific_clauses\": [\n                \"§5.2: W przypadku przetwarzania danych osobowych klientów Zleceniodawcy, Strony zawrą odrębne porozumienie powierzenia danych.\"\n            ],\n            \"compliance_issues\": \"✅ REQUIRED_ELEMENT_PRESENT\",\n            \"detailed_analysis\": {\n                \"recommendations\": \"Nie ma potrzeby wprowadzania zmian, ponieważ dokument spełnia wymagania zasady.\",\n                \"document_content\": \"W dokumencie znaleziono postanowienia dotyczące przetwarzania danych osobowych w §5, w tym oświadczenie Zleceniobiorcy o zapoznaniu się z informacją o przetwarzaniu danych oraz zapowiedź zawarcia odrębnego porozumienia powierzenia danych.\",\n                \"compliance_assessment\": \"Dokument spełnia zasadę, ponieważ zawiera klauzulę dotyczącą przetwarzania danych osobowych i przewiduje zawarcie odrębnego porozumienia powierzenia danych, co jest zgodne z wymogami RODO dotyczącymi powierzenia danych.\"\n            },\n            \"violation_severity\": \"\",\n            \"critical_violations\": []\n        },\n        \"rule_3\": {\n            \"original\": \"klauzula poufności (NDA)\",\n            \"matched_text\": \"Zleceniobiorca zobowiązuje się do zachowania w poufności wszelkich informacji dotyczących działalności Zleceniodawcy, uzyskanych w związku z wykonywaniem niniejszej umowy, zarówno w trakcie jej trwania, jak i po jej rozwiązaniu.\",\n            \"critical_gaps\": [\n                \"Brak określenia konsekwencji naruszenia poufności.\",\n                \"Niejasny zakres informacji objętych tajemnicą.\"\n            ],\n            \"critical_issues\": [],\n            \"recommendations\": \"Dokument zawiera wymagane elementy zgodnie z zasadą: klauzula poufności (NDA)\\n\\nZnalezione klauzule: §4. Poufność\",\n            \"suggested_fixes\": [],\n            \"compliance_score\": 7,\n            \"specific_clauses\": [\n                \"§4. Poufność\"\n            ],\n            \"compliance_issues\": \"✅ REQUIRED_ELEMENT_PRESENT\",\n            \"detailed_analysis\": {\n                \"recommendations\": [\n                    \"Dodanie postanowień dotyczących konsekwencji naruszenia poufności (np. kary umowne, rozwiązanie umowy).\",\n                    \"Doprecyzowanie, jakie konkretnie informacje są objęte tajemnicą (np. dane finansowe, strategie biznesowe, dane klientów).\"\n                ],\n                \"specific_issues\": [\n                    \"Brak określenia konkretnych konsekwencji naruszenia poufności.\",\n                    \"Niejasny zakres informacji objętych tajemnicą (np. czy dotyczy to wszystkich informacji, czy tylko określonych kategorii).\"\n                ],\n                \"document_content\": \"W dokumencie znajduje się klauzula poufności w §4, która zobowiązuje Zleceniobiorcę do zachowania w poufności informacji dotyczących działalności Zleceniodawcy.\",\n                \"compliance_assessment\": \"Klauzula spełnia podstawowe wymagania NDA, określając obowiązek poufności i zakres informacji objętych tajemnicą. Brakuje jednak szczegółowych postanowień dotyczących konsekwencji naruszenia poufności oraz zakresu informacji, które są objęte tajemnicą.\"\n            },\n            \"violation_severity\": \"\",\n            \"critical_violations\": []\n        },\n        \"rule_4\": {\n            \"original\": \"przejrzyste i bezpieczne zapisy dotyczące wynagrodzenia\",\n            \"matched_text\": \"§3. Wynagrodzenie\\n1. Za wykonanie zlecenia Zleceniobiorcy przysługuje wynagrodzenie w wysokości 3000 zł brutto miesięcznie.\\n2. Wynagrodzenie zostanie wypłacone po zakończeniu każdego zlecenia, na podstawie zestawienia godzin pracy.\\n3. Wynagrodzenie może ulec zmianie w zależności od stopnia zaangażowania Zleceniobiorcy, wedle uznania Zleceniodawcy.\",\n            \"critical_gaps\": [\n                \"Brak konkretnych kryteriów lub warunków zmiany wynagrodzenia.\"\n            ],\n            \"critical_issues\": [],\n            \"recommendations\": \"Dokument zawiera wymagane elementy zgodnie z zasadą: przejrzyste i bezpieczne zapisy dotyczące wynagrodzenia\\n\\nZnalezione klauzule: §3.1: Stałe wynagrodzenie miesięczne w wysokości 3000 zł brutto.; §3.2: Wypłata na podstawie zestawienia godzin pracy.; §3.3: Możliwość zmiany wynagrodzenia według uznania Zleceniodawcy.\",\n            \"suggested_fixes\": [],\n            \"compliance_score\": 8,\n            \"specific_clauses\": [\n                \"§3.1: Stałe wynagrodzenie miesięczne w wysokości 3000 zł brutto.\",\n                \"§3.2: Wypłata na podstawie zestawienia godzin pracy.\",\n                \"§3.3: Możliwość zmiany wynagrodzenia według uznania Zleceniodawcy.\"\n            ],\n            \"compliance_issues\": \"✅ REQUIRED_ELEMENT_PRESENT\",\n            \"detailed_analysis\": {\n                \"recommendations\": \"Aby zwiększyć przejrzystość i bezpieczeństwo zapisów dotyczących wynagrodzenia, należy dodać konkretne kryteria lub warunki, na podstawie których wynagrodzenie może ulec zmianie. Na przykład, można określić, że zmiana wynagrodzenia jest możliwa w przypadku przekroczenia określonej liczby godzin pracy lub osiągnięcia konkretnych celów projektowych.\",\n                \"specific_issues\": [\n                    \"Brak konkretnych kryteriów lub warunków zmiany wynagrodzenia, co może prowadzić do subiektywnych decyzji Zleceniodawcy.\"\n                ],\n                \"document_content\": \"Dokument zawiera następujące zapisy dotyczące wynagrodzenia: 1. Stałe wynagrodzenie miesięczne w wysokości 3000 zł brutto. 2. Wypłata po zakończeniu zlecenia na podstawie zestawienia godzin pracy. 3. Możliwość zmiany wynagrodzenia w zależności od zaangażowania Zleceniobiorcy, według uznania Zleceniodawcy.\",\n                \"compliance_assessment\": \"Zasada przejrzystych i bezpiecznych zapisów dotyczących wynagrodzenia jest spełniona, ponieważ dokument zawiera jasne informacje o wynagrodzeniu, sposobie jego wypłaty oraz warunkach zmiany. Jednakże, zapis o możliwości zmiany wynagrodzenia według uznania Zleceniodawcy może być niejasny i potencjalnie niezgodny z zasadą przejrzystości, ponieważ nie określa konkretnych kryteriów lub warunków, na podstawie których zmiana może nastąpić.\"\n            },\n            \"violation_severity\": \"\",\n            \"critical_violations\": []\n        },\n        \"rule_5\": {\n            \"original\": \"umowa nie może pozorować stosunku pracy\",\n            \"matched_text\": \"§1.3: Zlecenie będzie wykonywane w siedzibie Zleceniodawcy w godzinach 9:00–17:00 w dni robocze. | §3.3: Wynagrodzenie może ulec zmianie w zależności od stopnia zaangażowania Zleceniobiorcy, wedle uznania Zleceniodawcy.\",\n            \"critical_gaps\": [],\n            \"critical_issues\": [],\n            \"recommendations\": \"Dokument zawiera zabroniony element: umowa nie może pozorować stosunku pracy\\n\\nProblematyczne klauzule: §1.3; §3.3\",\n            \"suggested_fixes\": [],\n            \"compliance_score\": \"\",\n            \"specific_clauses\": [\n                \"§1.3\",\n                \"§3.3\"\n            ],\n            \"compliance_issues\": \"❌ FORBIDDEN_ELEMENT_FOUND\",\n            \"detailed_analysis\": {\n                \"found_violations\": [\n                    \"Wykonanie zlecenia w określonym miejscu i czasie (§1.3)\",\n                    \"Możliwość zmiany wynagrodzenia według uznania zleceniodawcy (§3.3)\"\n                ],\n                \"rule_prohibition\": \"Zasada zakazuje pozorowania stosunku pracy w umowach cywilnoprawnych, takich jak umowa zlecenia. Oznacza to, że umowa nie może zawierać postanowień, które wskazują na istnienie stosunku pracy, np. podległości służbowej, wykonywania pracy pod nadzorem, czy wynagrodzenia uzależnionego od uznania zleceniodawcy.\",\n                \"remediation_steps\": [\n                    \"Usunięcie lub zmodyfikowanie §1.3, aby zleceniobiorca mógł wykonywać zlecenie w dowolnym miejscu i czasie, zgodnie z umową zlecenia.\",\n                    \"Usunięcie lub zmodyfikowanie §3.3, aby wynagrodzenie było ustalone w sposób bardziej obiektywny, np. na podstawie stawki godzinowej lub ryczałtu.\"\n                ],\n                \"specific_problems\": [\n                    \"§1.3: Zlecenie będzie wykonywane w siedzibie Zleceniodawcy w godzinach 9:00–17:00 w dni robocze. To sugeruje stałe miejsce i czas pracy, co jest typowe dla umowy o pracę.\",\n                    \"§3.3: Wynagrodzenie może ulec zmianie w zależności od stopnia zaangażowania Zleceniobiorcy, wedle uznania Zleceniodawcy. To daje zleceniodawcy zbyt dużą swobodę w kształtowaniu wynagrodzenia, co może być interpretowane jako element podległości służbowej.\"\n                ],\n                \"violation_assessment\": [\n                    \"Wykonanie zlecenia w określonym miejscu i czasie (§1.3) sugeruje, że zleceniobiorca pracuje w siedzibie zleceniodawcy w godzinach 9:00–17:00 w dni robocze, co jest typowe dla stosunku pracy.\",\n                    \"Możliwość zmiany wynagrodzenia według uznania zleceniodawcy (§3.3) może być interpretowana jako element podległości służbowej, co również jest charakterystyczne dla stosunku pracy.\"\n                ]\n            },\n            \"violation_severity\": 7,\n            \"critical_violations\": [\n                \"§1.3\",\n                \"§3.3\"\n            ]\n        },\n        \"rule_6\": {\n            \"original\": \"brak sprzecznych lub niespójnych zapisów\",\n            \"matched_text\": \"§3. Wynagrodzenie, ust. 1 i 3\",\n            \"critical_gaps\": [],\n            \"critical_issues\": [],\n            \"recommendations\": \"Dokument zawiera zabroniony element: brak sprzecznych lub niespójnych zapisów\\n\\nProblematyczne klauzule: §3.1; §3.3\",\n            \"suggested_fixes\": [],\n            \"compliance_score\": \"\",\n            \"specific_clauses\": [\n                \"§3.1\",\n                \"§3.3\"\n            ],\n            \"compliance_issues\": \"❌ FORBIDDEN_ELEMENT_FOUND\",\n            \"detailed_analysis\": {\n                \"found_violations\": [\n                    \"§3. Wynagrodzenie, ust. 1 i 3\"\n                ],\n                \"rule_prohibition\": \"Zasada zakazuje sprzecznych lub niespójnych zapisów w dokumentach.\",\n                \"remediation_steps\": [\n                    \"Należy usunąć sprzeczność poprzez ujednolicenie zapisów dotyczących wynagrodzenia. Możliwe rozwiązania to: 1) Ustalenie stałego wynagrodzenia bez możliwości zmiany, 2) Określenie warunków zmiany wynagrodzenia w sposób spójny z ustaloną kwotą.\"\n                ],\n                \"specific_problems\": [\n                    \"W §3.1 wynagrodzenie jest ustalone na stałą kwotę 3000 zł brutto miesięcznie, natomiast w §3.3 wynagrodzenie może ulec zmianie w zależności od stopnia zaangażowania Zleceniobiorcy, wedle uznania Zleceniodawcy. Te zapisy są sprzeczne, ponieważ jednocześnie ustalają stałą kwotę i pozwalają na jej zmianę.\"\n                ],\n                \"violation_assessment\": \"Znaleziono sprzeczność w zapisach dotyczących wynagrodzenia, co narusza zasadę zakazującą niespójności.\"\n            },\n            \"violation_severity\": 8,\n            \"critical_violations\": [\n                \"Sprzeczność w zapisach dotyczących wynagrodzenia\"\n            ]\n        }\n    }\n}"
+				}
+			]
+		}
+	]
+}
