@@ -1,13 +1,16 @@
 {
-	"name": "n8n-nodes-gaius-lex",
-	"version": "0.1.0",
+	"name": "n8n-nodes-gaius",
+	"version": "0.1.1",
 	"description": "n8n community node for Gaius-Lex API",
 	"author": "",
 	"license": "MIT",
 	"keywords": [
 		"n8n-community-node",
+		"n8n-community-node-package",
 		"n8n",
 		"gaius-lex",
+		"gaius",
+		"lex",
 		"legal"
 	],
 	"main": "dist/index.js",
@@ -34,4 +37,3 @@
 		]
 	}
 }
-
