@@ -1,5 +1,36 @@
-import type { IExecuteFunctions, IDataObject, INodeExecutionData, INodeType, INodeTypeDescription } from 'n8n-workflow';
+import {
+	NodeOperationError,
+	type IDataObject,
+	type IExecuteFunctions,
+	type INodeExecutionData,
+	type INodeType,
+	type INodeTypeDescription,
+} from 'n8n-workflow';
 import { Buffer } from 'buffer';
+
+const DEFAULT_BASE_URL = 'https://api.gaius-lex.pl';
+const MAX_BINARY_BYTES = 25 * 1024 * 1024;
+const MAX_TEXT_LENGTH = 200_000;
+const MAX_JSON_INPUT_LENGTH = 100_000;
+
+type RequestOptions = {
+	method: 'GET' | 'POST';
+	uri: string;
+	headers: Record<string, string>;
+	json: true;
+	body?: IDataObject;
+	qs?: IDataObject;
+	formData?: {
+		file: {
+			value: Buffer;
+			options: {
+				filename: string;
+			};
+		};
+	};
+	followRedirect: false;
+	timeout: number;
+};
 
 type Endpoint =
 	| 'availableSources'
@@ -32,6 +63,129 @@ type Endpoint =
 	| 'krsLookup'
 	| 'krsTextAnalysis'
 	| 'krsAgreement';
+
+async function makeRequest(ctx: IExecuteFunctions, itemIndex: number, options: Omit<RequestOptions, 'followRedirect' | 'timeout'>): Promise<IDataObject | IDataObject[]> {
+	try {
+		return await ctx.helpers.request({
+			...options,
+			followRedirect: false,
+			timeout: 30_000,
+		});
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown request error';
+		throw new NodeOperationError(ctx.getNode(), `Request to Gaius-Lex failed for ${options.method} ${options.uri}: ${message}`, {
+			itemIndex,
+			description: 'Request details are intentionally redacted to avoid leaking secrets or payload data.',
+		});
+	}
+}
+
+function normalizeBaseUrl(ctx: IExecuteFunctions, value: string, itemIndex: number): string {
+	return normalizeHttpUrl(ctx, value, 'Base URL', itemIndex).replace(/\/$/, '');
+}
+
+function normalizeHttpUrl(ctx: IExecuteFunctions, value: string, fieldName: string, itemIndex: number): string {
+	const input = assertRequiredString(ctx, value, fieldName, itemIndex);
+
+	let parsed: URL;
+	try {
+		parsed = new URL(input);
+	} catch {
+		throw new NodeOperationError(ctx.getNode(), `${fieldName} must be a valid absolute URL`, { itemIndex });
+	}
+
+	if (!['http:', 'https:'].includes(parsed.protocol)) {
+		throw new NodeOperationError(ctx.getNode(), `${fieldName} must use http or https`, { itemIndex });
+	}
+
+	return parsed.toString().replace(/\/$/, '');
+}
+
+function assertRequiredString(ctx: IExecuteFunctions, value: string, fieldName: string, itemIndex: number): string {
+	const normalized = value.trim();
+	if (!normalized) {
+		throw new NodeOperationError(ctx.getNode(), `${fieldName} is required`, { itemIndex });
+	}
+	return normalized;
+}
+
+function assertMaxLength(ctx: IExecuteFunctions, value: string, maxLength: number, fieldName: string, itemIndex: number): string {
+	if (value.length > maxLength) {
+		throw new NodeOperationError(ctx.getNode(), `${fieldName} exceeds the maximum length of ${maxLength} characters`, { itemIndex });
+	}
+	return value;
+}
+
+function assertPositiveInteger(ctx: IExecuteFunctions, value: number, fieldName: string, itemIndex: number): number {
+	if (!Number.isInteger(value) || value < 1) {
+		throw new NodeOperationError(ctx.getNode(), `${fieldName} must be a positive integer`, { itemIndex });
+	}
+	return value;
+}
+
+function assertRange(ctx: IExecuteFunctions, value: number, fieldName: string, min: number, max: number, itemIndex: number): number {
+	if (!Number.isFinite(value) || value < min || value > max) {
+		throw new NodeOperationError(ctx.getNode(), `${fieldName} must be between ${min} and ${max}`, { itemIndex });
+	}
+	return value;
+}
+
+function assertUuid(ctx: IExecuteFunctions, value: string, fieldName: string, itemIndex: number): string {
+	const normalized = assertRequiredString(ctx, value, fieldName, itemIndex);
+	if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(normalized)) {
+		throw new NodeOperationError(ctx.getNode(), `${fieldName} must be a valid UUID`, { itemIndex });
+	}
+	return normalized;
+}
+
+function assertKrs(ctx: IExecuteFunctions, value: string, itemIndex: number): string {
+	const normalized = assertRequiredString(ctx, value, 'KRS Number', itemIndex);
+	if (!/^\d{10}$/.test(normalized)) {
+		throw new NodeOperationError(ctx.getNode(), 'KRS Number must contain exactly 10 digits', { itemIndex });
+	}
+	return normalized;
+}
+
+function parseJsonValue(ctx: IExecuteFunctions, value: string, fieldName: string, itemIndex: number): IDataObject | IDataObject[] {
+	try {
+		return JSON.parse(value) as IDataObject | IDataObject[];
+	} catch {
+		throw new NodeOperationError(ctx.getNode(), `Invalid JSON in ${fieldName}`, { itemIndex });
+	}
+}
+
+function parseJsonObject(ctx: IExecuteFunctions, value: string, fieldName: string, itemIndex: number): IDataObject {
+	const parsed = parseJsonValue(ctx, value, fieldName, itemIndex);
+	if (Array.isArray(parsed) || parsed === null) {
+		throw new NodeOperationError(ctx.getNode(), `${fieldName} must be a JSON object`, { itemIndex });
+	}
+	return parsed;
+}
+
+function encodePathSegment(value: string): string {
+	return encodeURIComponent(value);
+}
+
+function getBinaryFileBuffer(
+	ctx: IExecuteFunctions,
+	binaryData: { data: string; fileName?: string } | undefined,
+	binaryField: string,
+	itemIndex: number,
+): { fileBuffer: Buffer; filename: string } {
+	if (!binaryData) {
+		throw new NodeOperationError(ctx.getNode(), `No binary data found in field "${binaryField}"`, { itemIndex });
+	}
+
+	const fileBuffer = Buffer.from(binaryData.data, 'base64');
+	if (fileBuffer.length === 0) {
+		throw new NodeOperationError(ctx.getNode(), `Binary field "${binaryField}" is empty`, { itemIndex });
+	}
+	if (fileBuffer.length > MAX_BINARY_BYTES) {
+		throw new NodeOperationError(ctx.getNode(), `Binary field "${binaryField}" exceeds the ${MAX_BINARY_BYTES / (1024 * 1024)} MB limit`, { itemIndex });
+	}
+
+	return { fileBuffer, filename: binaryData.fileName || 'file' };
+}
 
 export class GaiusLex implements INodeType {
 	description: INodeTypeDescription = {
@@ -367,6 +521,7 @@ export class GaiusLex implements INodeType {
 				name: 'tempToken',
 				description: 'Temporary token for webhook callback',
 				type: 'string',
+				typeOptions: { password: true },
 				default: '',
 				displayOptions: { show: { operation: ['agentWebhook', 'answerWebhook', 'abusivityWebhook', 'thesesAnalysisWebhook', 'alignmentWebhook'] } },
 			},
@@ -380,7 +535,7 @@ export class GaiusLex implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			const operation = this.getNodeParameter('operation', i) as Endpoint;
 			const cred = await this.getCredentials('gaiusLexApi');
-			const baseUrl = (cred.baseUrl as string) || 'https://api.gaius-lex.pl';
+			const baseUrl = normalizeBaseUrl(this, (cred.baseUrl as string) || DEFAULT_BASE_URL, i);
 			const apiKey = cred.apiKey as string;
 			let responseData: IDataObject | IDataObject[] = {};
 
@@ -389,8 +544,8 @@ export class GaiusLex implements INodeType {
 			if (operation === 'availableSources') {
 				const country = this.getNodeParameter('country', i) as string;
 				const qs: IDataObject = {};
-				if (country) qs.country = country;
-				responseData = await this.helpers.request({
+				if (country) qs.country = assertMaxLength(this, country, 16, 'Country', i);
+				responseData = await makeRequest(this, i, {
 					method: 'GET',
 					uri: `${baseUrl}/api/v1/available-sources`,
 					headers,
@@ -398,19 +553,19 @@ export class GaiusLex implements INodeType {
 					json: true,
 				});
 			} else if (operation === 'search') {
-				const query = this.getNodeParameter('query', i) as string;
-				const page = this.getNodeParameter('page', i) as number;
-				const pageSize = this.getNodeParameter('pageSize', i) as number;
-				const sortBy = this.getNodeParameter('sortBy', i) as string;
+				const query = assertMaxLength(this, this.getNodeParameter('query', i) as string, MAX_TEXT_LENGTH, 'Query', i);
+				const page = assertPositiveInteger(this, this.getNodeParameter('page', i) as number, 'Page', i);
+				const pageSize = assertRange(this, this.getNodeParameter('pageSize', i) as number, 'Page Size', 1, 100, i);
+				const sortBy = assertMaxLength(this, this.getNodeParameter('sortBy', i) as string, 64, 'Sort By', i);
 				const dateFrom = this.getNodeParameter('dateFrom', i) as string;
 				const dateTo = this.getNodeParameter('dateTo', i) as string;
-				const categories = this.getNodeParameter('categories', i) as string;
-				const language = this.getNodeParameter('language', i) as string;
+				const categories = assertMaxLength(this, this.getNodeParameter('categories', i) as string, 512, 'Categories', i);
+				const language = assertMaxLength(this, this.getNodeParameter('language', i) as string, 16, 'Language', i);
 				const qs: IDataObject = { q: query, page, page_size: pageSize, sort_by: sortBy, language };
 				if (dateFrom) qs.date_from = dateFrom;
 				if (dateTo) qs.date_to = dateTo;
 				if (categories) qs.categories = categories;
-				responseData = await this.helpers.request({
+				responseData = await makeRequest(this, i, {
 					method: 'GET',
 					uri: `${baseUrl}/api/v1/search`,
 					headers,
@@ -418,7 +573,7 @@ export class GaiusLex implements INodeType {
 					json: true,
 				});
 			} else if (operation === 'agentProfiles') {
-				responseData = await this.helpers.request({
+				responseData = await makeRequest(this, i, {
 					method: 'GET',
 					uri: `${baseUrl}/api/v1/agent-profiles`,
 					headers,
@@ -426,163 +581,157 @@ export class GaiusLex implements INodeType {
 				});
 			} else if (operation === 'externalVectorize') {
 				const binaryField = this.getNodeParameter('binaryFile', i) as string;
-				const binaryData = items[i].binary?.[binaryField];
-				if (!binaryData) throw new Error(`No binary data found in field "${binaryField}"`);
-				const fileBuffer = Buffer.from(binaryData.data, 'base64');
-				responseData = await this.helpers.request({
+				const { fileBuffer, filename } = getBinaryFileBuffer(this, items[i].binary?.[binaryField], binaryField, i);
+				responseData = await makeRequest(this, i, {
 					method: 'POST',
 					uri: `${baseUrl}/api/v1/external/vectorize`,
 					headers,
-					formData: { file: { value: fileBuffer, options: { filename: binaryData.fileName || 'file' } } },
+					formData: { file: { value: fileBuffer, options: { filename } } },
 					json: true,
 				});
 			} else if (operation === 'externalDocumentGet') {
-				const fileId = this.getNodeParameter('fileId', i) as string;
-				responseData = await this.helpers.request({
+				const fileId = encodePathSegment(assertRequiredString(this, this.getNodeParameter('fileId', i) as string, 'File ID', i));
+				responseData = await makeRequest(this, i, {
 					method: 'GET',
 					uri: `${baseUrl}/api/v1/external/document/${fileId}`,
 					headers,
 					json: true,
 				});
 			} else if (operation === 'externalDocumentsList') {
-				responseData = await this.helpers.request({
+				responseData = await makeRequest(this, i, {
 					method: 'GET',
 					uri: `${baseUrl}/api/v1/external/list-documents`,
 					headers,
 					json: true,
 				});
 			} else if (operation === 'agentPollCreate') {
-				const messagesJson = this.getNodeParameter('messagesJson', i) as string;
-				const maxToolCalls = this.getNodeParameter('maxToolCalls', i) as number;
-				const maxLexBudget = this.getNodeParameter('maxLexBudget', i) as number;
+				const messagesJson = assertMaxLength(this, this.getNodeParameter('messagesJson', i) as string, MAX_JSON_INPUT_LENGTH, 'Messages', i);
+				const maxToolCalls = assertRange(this, this.getNodeParameter('maxToolCalls', i) as number, 'Max Tool Calls', 1, 100, i);
+				const maxLexBudget = assertRange(this, this.getNodeParameter('maxLexBudget', i) as number, 'Max Lex Budget', 1, 10000, i);
 				const permissionMode = this.getNodeParameter('permissionMode', i) as string;
-				const profileId = this.getNodeParameter('profileId', i) as string;
-				const sourceFiltersJson = this.getNodeParameter('sourceFiltersJson', i) as string;
-				let messages: IDataObject[];
-				let sourceFilters: IDataObject;
-				try { messages = JSON.parse(messagesJson || '[]') as IDataObject[]; } catch { throw new Error('Invalid JSON in Messages'); }
-				try { sourceFilters = JSON.parse(sourceFiltersJson || '{}') as IDataObject; } catch { throw new Error('Invalid JSON in Source Filters'); }
+				const profileId = assertMaxLength(this, this.getNodeParameter('profileId', i) as string, 256, 'Profile ID', i);
+				const sourceFiltersJson = assertMaxLength(this, this.getNodeParameter('sourceFiltersJson', i) as string, MAX_JSON_INPUT_LENGTH, 'Source Filters', i);
+				const messages = parseJsonValue(this, messagesJson || '[]', 'Messages', i);
+				if (!Array.isArray(messages)) throw new NodeOperationError(this.getNode(), 'Messages must be a JSON array', { itemIndex: i });
+				const sourceFilters = parseJsonObject(this, sourceFiltersJson || '{}', 'Source Filters', i);
 				const body: IDataObject = { messages, max_tool_calls: maxToolCalls, max_lex_budget_agent: maxLexBudget, permission_mode: permissionMode, source_filters: sourceFilters };
 				if (profileId) body.profile_id = profileId;
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/agent/poll`, headers, body, json: true });
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/agent/poll`, headers, body, json: true });
 			} else if (operation === 'agentPollGet') {
-				const requestId = this.getNodeParameter('requestId', i) as string;
-				responseData = await this.helpers.request({ method: 'GET', uri: `${baseUrl}/api/v1/agent/poll/${requestId}`, headers, json: true });
+				const requestId = encodePathSegment(assertUuid(this, this.getNodeParameter('requestId', i) as string, 'Request ID', i));
+				responseData = await makeRequest(this, i, { method: 'GET', uri: `${baseUrl}/api/v1/agent/poll/${requestId}`, headers, json: true });
 			} else if (operation === 'agentWebhook') {
-				const endpoint = this.getNodeParameter('callbackEndpoint', i) as string;
-				const tempToken = this.getNodeParameter('tempToken', i) as string;
-				const maxToolCalls = this.getNodeParameter('maxToolCalls', i) as number;
-				const maxLexBudget = this.getNodeParameter('maxLexBudget', i) as number;
+				const endpoint = normalizeHttpUrl(this, this.getNodeParameter('callbackEndpoint', i) as string, 'Callback Endpoint', i);
+				const tempToken = assertMaxLength(this, this.getNodeParameter('tempToken', i) as string, 1024, 'Temp Token', i);
+				const maxToolCalls = assertRange(this, this.getNodeParameter('maxToolCalls', i) as number, 'Max Tool Calls', 1, 100, i);
+				const maxLexBudget = assertRange(this, this.getNodeParameter('maxLexBudget', i) as number, 'Max Lex Budget', 1, 10000, i);
 				const permissionMode = this.getNodeParameter('permissionMode', i) as string;
-				const profileId = this.getNodeParameter('profileId', i) as string;
-				const sourceFiltersJson = this.getNodeParameter('sourceFiltersJson', i) as string;
-				let sourceFilters: IDataObject;
-				try { sourceFilters = JSON.parse(sourceFiltersJson || '{}') as IDataObject; } catch { throw new Error('Invalid JSON in Source Filters'); }
+				const profileId = assertMaxLength(this, this.getNodeParameter('profileId', i) as string, 256, 'Profile ID', i);
+				const sourceFiltersJson = assertMaxLength(this, this.getNodeParameter('sourceFiltersJson', i) as string, MAX_JSON_INPUT_LENGTH, 'Source Filters', i);
+				const sourceFilters = parseJsonObject(this, sourceFiltersJson || '{}', 'Source Filters', i);
 				const body: IDataObject = { endpoint, temp_token: tempToken, max_tool_calls: maxToolCalls, max_lex_budget_agent: maxLexBudget, permission_mode: permissionMode, source_filters: sourceFilters };
 				if (profileId) body.profile_id = profileId;
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/agent`, headers, body, json: true });
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/agent`, headers, body, json: true });
 			} else if (operation === 'answerPollCreate') {
-				const question = this.getNodeParameter('question', i) as string;
+				const question = assertMaxLength(this, this.getNodeParameter('question', i) as string, MAX_TEXT_LENGTH, 'Question', i);
 				const simplify = this.getNodeParameter('simplify', i) as boolean;
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/answer/poll`, headers, body: { question, simplify }, json: true });
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/answer/poll`, headers, body: { question, simplify }, json: true });
 			} else if (operation === 'answerPollGet') {
-				const requestId = this.getNodeParameter('requestId', i) as string;
-				responseData = await this.helpers.request({ method: 'GET', uri: `${baseUrl}/api/v1/answer/poll/${requestId}`, headers, json: true });
+				const requestId = encodePathSegment(assertUuid(this, this.getNodeParameter('requestId', i) as string, 'Request ID', i));
+				responseData = await makeRequest(this, i, { method: 'GET', uri: `${baseUrl}/api/v1/answer/poll/${requestId}`, headers, json: true });
 			} else if (operation === 'answerWebhook') {
-				const endpoint = this.getNodeParameter('callbackEndpoint', i) as string;
-				const tempToken = this.getNodeParameter('tempToken', i) as string;
-				const question = this.getNodeParameter('question', i) as string;
+				const endpoint = normalizeHttpUrl(this, this.getNodeParameter('callbackEndpoint', i) as string, 'Callback Endpoint', i);
+				const tempToken = assertMaxLength(this, this.getNodeParameter('tempToken', i) as string, 1024, 'Temp Token', i);
+				const question = assertMaxLength(this, this.getNodeParameter('question', i) as string, MAX_TEXT_LENGTH, 'Question', i);
 				const simplify = this.getNodeParameter('simplify', i) as boolean;
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/answer`, headers, body: { endpoint, temp_token: tempToken, question, simplify }, json: true });
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/answer`, headers, body: { endpoint, temp_token: tempToken, question, simplify }, json: true });
 			} else if (operation === 'ocrPollCreate') {
 				const binaryField = this.getNodeParameter('binaryFile', i) as string;
-				const binaryData = items[i].binary?.[binaryField];
-				if (!binaryData) throw new Error(`No binary data found in field "${binaryField}"`);
-				const fileBuffer = Buffer.from(binaryData.data, 'base64');
-				responseData = await this.helpers.request({
+				const { fileBuffer, filename } = getBinaryFileBuffer(this, items[i].binary?.[binaryField], binaryField, i);
+				responseData = await makeRequest(this, i, {
 					method: 'POST',
 					uri: `${baseUrl}/api/v1/ocr/poll`,
 					headers,
-					formData: { file: { value: fileBuffer, options: { filename: binaryData.fileName || 'file' } } },
+					formData: { file: { value: fileBuffer, options: { filename } } },
 					json: true,
 				});
 			} else if (operation === 'ocrPollGet') {
-				const requestId = this.getNodeParameter('requestId', i) as string;
-				responseData = await this.helpers.request({ method: 'GET', uri: `${baseUrl}/api/v1/ocr/poll/${requestId}`, headers, json: true });
+				const requestId = encodePathSegment(assertUuid(this, this.getNodeParameter('requestId', i) as string, 'Request ID', i));
+				responseData = await makeRequest(this, i, { method: 'GET', uri: `${baseUrl}/api/v1/ocr/poll/${requestId}`, headers, json: true });
 			} else if (operation === 'anonymization') {
-				const text = this.getNodeParameter('text', i) as string;
-				const threshold = this.getNodeParameter('threshold', i) as number;
+				const text = assertMaxLength(this, this.getNodeParameter('text', i) as string, MAX_TEXT_LENGTH, 'Text', i);
+				const threshold = assertRange(this, this.getNodeParameter('threshold', i) as number, 'Threshold', 0, 1, i);
 				const includeLemmas = this.getNodeParameter('includeLemmas', i) as boolean;
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/anonymization`, headers, body: { text, threshold, include_lemmas: includeLemmas }, json: true });
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/anonymization`, headers, body: { text, threshold, include_lemmas: includeLemmas }, json: true });
 			} else if (operation === 'docVerificationPollCreate') {
-				const text = this.getNodeParameter('text', i) as string;
-				const fileId = this.getNodeParameter('docFileId', i) as string;
+				const text = assertMaxLength(this, this.getNodeParameter('text', i) as string, MAX_TEXT_LENGTH, 'Text', i);
+				const fileId = (this.getNodeParameter('docFileId', i) as string).trim();
 				const deepCheck = this.getNodeParameter('deepCheck', i) as boolean;
 				const checkJudiciary = this.getNodeParameter('checkJudiciary', i) as boolean;
 				const checkInterpretations = this.getNodeParameter('checkInterpretations', i) as boolean;
 				const checkActs = this.getNodeParameter('checkActs', i) as boolean;
 				const checkKio = this.getNodeParameter('checkKio', i) as boolean;
 				const body: IDataObject = { deep_check: deepCheck, check_judiciary: checkJudiciary, check_interpretations: checkInterpretations, check_acts: checkActs, check_kio: checkKio };
-				if (fileId) body.fileId = parseInt(fileId, 10);
+				if (fileId) body.fileId = assertPositiveInteger(this, Number.parseInt(fileId, 10), 'Document File ID', i);
 				else body.content = text;
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/doc-verification/poll`, headers, body, json: true });
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/doc-verification/poll`, headers, body, json: true });
 			} else if (operation === 'docVerificationPollGet') {
-				const requestId = this.getNodeParameter('requestId', i) as string;
-				responseData = await this.helpers.request({ method: 'GET', uri: `${baseUrl}/api/v1/doc-verification/poll/${requestId}`, headers, json: true });
+				const requestId = encodePathSegment(assertUuid(this, this.getNodeParameter('requestId', i) as string, 'Request ID', i));
+				responseData = await makeRequest(this, i, { method: 'GET', uri: `${baseUrl}/api/v1/doc-verification/poll/${requestId}`, headers, json: true });
 			} else if (operation === 'abusivityPollCreate') {
-				const text = this.getNodeParameter('text', i) as string;
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/abusivity/poll`, headers, body: { text }, json: true });
+				const text = assertMaxLength(this, this.getNodeParameter('text', i) as string, MAX_TEXT_LENGTH, 'Text', i);
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/abusivity/poll`, headers, body: { text }, json: true });
 			} else if (operation === 'abusivityPollGet') {
-				const requestId = this.getNodeParameter('requestId', i) as string;
-				responseData = await this.helpers.request({ method: 'GET', uri: `${baseUrl}/api/v1/abusivity/poll/${requestId}`, headers, json: true });
+				const requestId = encodePathSegment(assertUuid(this, this.getNodeParameter('requestId', i) as string, 'Request ID', i));
+				responseData = await makeRequest(this, i, { method: 'GET', uri: `${baseUrl}/api/v1/abusivity/poll/${requestId}`, headers, json: true });
 			} else if (operation === 'abusivityWebhook') {
-				const endpoint = this.getNodeParameter('callbackEndpoint', i) as string;
-				const tempToken = this.getNodeParameter('tempToken', i) as string;
-				const text = this.getNodeParameter('text', i) as string;
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/abusivity`, headers, body: { endpoint, temp_token: tempToken, text }, json: true });
+				const endpoint = normalizeHttpUrl(this, this.getNodeParameter('callbackEndpoint', i) as string, 'Callback Endpoint', i);
+				const tempToken = assertMaxLength(this, this.getNodeParameter('tempToken', i) as string, 1024, 'Temp Token', i);
+				const text = assertMaxLength(this, this.getNodeParameter('text', i) as string, MAX_TEXT_LENGTH, 'Text', i);
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/abusivity`, headers, body: { endpoint, temp_token: tempToken, text }, json: true });
 			} else if (operation === 'thesesAnalysisPollCreate') {
-				const text = this.getNodeParameter('text', i) as string;
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/theses-analysis/poll`, headers, body: { text }, json: true });
+				const text = assertMaxLength(this, this.getNodeParameter('text', i) as string, MAX_TEXT_LENGTH, 'Text', i);
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/theses-analysis/poll`, headers, body: { text }, json: true });
 			} else if (operation === 'thesesAnalysisPollGet') {
-				const requestId = this.getNodeParameter('requestId', i) as string;
-				responseData = await this.helpers.request({ method: 'GET', uri: `${baseUrl}/api/v1/theses-analysis/poll/${requestId}`, headers, json: true });
+				const requestId = encodePathSegment(assertUuid(this, this.getNodeParameter('requestId', i) as string, 'Request ID', i));
+				responseData = await makeRequest(this, i, { method: 'GET', uri: `${baseUrl}/api/v1/theses-analysis/poll/${requestId}`, headers, json: true });
 			} else if (operation === 'thesesAnalysisWebhook') {
-				const endpoint = this.getNodeParameter('callbackEndpoint', i) as string;
-				const tempToken = this.getNodeParameter('tempToken', i) as string;
-				const text = this.getNodeParameter('text', i) as string;
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/theses-analysis`, headers, body: { endpoint, temp_token: tempToken, text }, json: true });
+				const endpoint = normalizeHttpUrl(this, this.getNodeParameter('callbackEndpoint', i) as string, 'Callback Endpoint', i);
+				const tempToken = assertMaxLength(this, this.getNodeParameter('tempToken', i) as string, 1024, 'Temp Token', i);
+				const text = assertMaxLength(this, this.getNodeParameter('text', i) as string, MAX_TEXT_LENGTH, 'Text', i);
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/theses-analysis`, headers, body: { endpoint, temp_token: tempToken, text }, json: true });
 			} else if (operation === 'alignmentPollCreate') {
-				const text = this.getNodeParameter('text', i) as string;
-				const rulesJson = this.getNodeParameter('rulesJson', i) as string;
-				let rules: IDataObject[];
-				try { rules = JSON.parse(rulesJson || '[]') as IDataObject[]; } catch { throw new Error('Invalid JSON in Rules'); }
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/alignment/poll`, headers, body: { text, rules }, json: true });
+				const text = assertMaxLength(this, this.getNodeParameter('text', i) as string, MAX_TEXT_LENGTH, 'Text', i);
+				const rulesJson = assertMaxLength(this, this.getNodeParameter('rulesJson', i) as string, MAX_JSON_INPUT_LENGTH, 'Rules', i);
+				const rules = parseJsonValue(this, rulesJson || '[]', 'Rules', i);
+				if (!Array.isArray(rules)) throw new NodeOperationError(this.getNode(), 'Rules must be a JSON array', { itemIndex: i });
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/alignment/poll`, headers, body: { text, rules }, json: true });
 			} else if (operation === 'alignmentPollGet') {
-				const requestId = this.getNodeParameter('requestId', i) as string;
-				responseData = await this.helpers.request({ method: 'GET', uri: `${baseUrl}/api/v1/alignment/poll/${requestId}`, headers, json: true });
+				const requestId = encodePathSegment(assertUuid(this, this.getNodeParameter('requestId', i) as string, 'Request ID', i));
+				responseData = await makeRequest(this, i, { method: 'GET', uri: `${baseUrl}/api/v1/alignment/poll/${requestId}`, headers, json: true });
 			} else if (operation === 'alignmentWebhook') {
-				const endpoint = this.getNodeParameter('callbackEndpoint', i) as string;
-				const tempToken = this.getNodeParameter('tempToken', i) as string;
-				const text = this.getNodeParameter('text', i) as string;
-				const rulesJson = this.getNodeParameter('rulesJson', i) as string;
-				let rules: IDataObject[];
-				try { rules = JSON.parse(rulesJson || '[]') as IDataObject[]; } catch { throw new Error('Invalid JSON in Rules'); }
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/alignment`, headers, body: { endpoint, temp_token: tempToken, text, rules }, json: true });
+				const endpoint = normalizeHttpUrl(this, this.getNodeParameter('callbackEndpoint', i) as string, 'Callback Endpoint', i);
+				const tempToken = assertMaxLength(this, this.getNodeParameter('tempToken', i) as string, 1024, 'Temp Token', i);
+				const text = assertMaxLength(this, this.getNodeParameter('text', i) as string, MAX_TEXT_LENGTH, 'Text', i);
+				const rulesJson = assertMaxLength(this, this.getNodeParameter('rulesJson', i) as string, MAX_JSON_INPUT_LENGTH, 'Rules', i);
+				const rules = parseJsonValue(this, rulesJson || '[]', 'Rules', i);
+				if (!Array.isArray(rules)) throw new NodeOperationError(this.getNode(), 'Rules must be a JSON array', { itemIndex: i });
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/alignment`, headers, body: { endpoint, temp_token: tempToken, text, rules }, json: true });
 			} else if (operation === 'alignmentRuleExtraction') {
-				const text = this.getNodeParameter('text', i) as string;
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/alignment/rule-extraction`, headers, body: { text }, json: true });
+				const text = assertMaxLength(this, this.getNodeParameter('text', i) as string, MAX_TEXT_LENGTH, 'Text', i);
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/alignment/rule-extraction`, headers, body: { text }, json: true });
 			} else if (operation === 'krsLookup') {
-				const krs = this.getNodeParameter('krsNumber', i) as string;
-				responseData = await this.helpers.request({ method: 'GET', uri: `${baseUrl}/api/v1/krs`, headers, qs: { krs }, json: true });
+				const krs = assertKrs(this, this.getNodeParameter('krsNumber', i) as string, i);
+				responseData = await makeRequest(this, i, { method: 'GET', uri: `${baseUrl}/api/v1/krs`, headers, qs: { krs }, json: true });
 			} else if (operation === 'krsTextAnalysis') {
-				const text = this.getNodeParameter('text', i) as string;
-				const filePath = this.getNodeParameter('filePath', i) as string;
+				const text = assertMaxLength(this, this.getNodeParameter('text', i) as string, MAX_TEXT_LENGTH, 'Text', i);
+				const filePath = assertMaxLength(this, this.getNodeParameter('filePath', i) as string, 2048, 'File Path', i);
 				const body: IDataObject = { text };
 				if (filePath) body.filePath = filePath;
-				responseData = await this.helpers.request({ method: 'POST', uri: `${baseUrl}/api/v1/krs-text-analysis`, headers, body, json: true });
+				responseData = await makeRequest(this, i, { method: 'POST', uri: `${baseUrl}/api/v1/krs-text-analysis`, headers, body, json: true });
 			} else if (operation === 'krsAgreement') {
-				const krs = this.getNodeParameter('krsNumber', i) as string;
-				responseData = await this.helpers.request({ method: 'GET', uri: `${baseUrl}/api/v1/krs-agreement`, headers, qs: { krs }, json: true });
+				const krs = assertKrs(this, this.getNodeParameter('krsNumber', i) as string, i);
+				responseData = await makeRequest(this, i, { method: 'GET', uri: `${baseUrl}/api/v1/krs-agreement`, headers, qs: { krs }, json: true });
 			}
 
 			returnData.push({ json: responseData as IDataObject });

@@ -8,7 +8,7 @@ export class GaiusLexApi implements ICredentialType {
 		{
 			displayName: 'Base URL',
 			name: 'baseUrl',
-			description: 'The base URL for the Gaius-Lex API',
+			description: 'Absolute HTTP(S) base URL for the Gaius-Lex API. You can use a custom host.',
 			type: 'string',
 			default: 'https://api.gaius-lex.pl',
 			required: true,

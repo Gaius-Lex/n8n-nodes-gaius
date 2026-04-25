@@ -20,8 +20,8 @@
 		"prepublishOnly": "npm run build"
 	},
 	"dependencies": {
-		"n8n-core": "^1.49.0",
-		"n8n-workflow": "^1.49.0"
+		"n8n-core": "^2.16.1",
+		"n8n-workflow": "^2.16.0"
 	},
 	"devDependencies": {
 		"@types/node": "^18.19.50",

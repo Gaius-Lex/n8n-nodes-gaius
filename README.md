@@ -32,7 +32,16 @@ npm run build
 Create a `Gaius-Lex API` credential in n8n and provide:
 
 - `API Key` - sent as `Authorization: Api-Key <KEY>`
-- `Base URL` - defaults to `https://api.gaius-lex.pl`
+- `Base URL` - defaults to `https://api.gaius-lex.pl`, but may point to any absolute HTTP(S) endpoint you control
+
+## Security Notes
+
+- `Temp Token` fields are masked in the n8n UI
+- The node validates `Base URL` and `Callback Endpoint` as absolute HTTP(S) URLs
+- Redirects are disabled for outbound API calls to reduce accidental credential leakage across hosts
+- Async `requestId` values are validated as UUIDs before being inserted into request paths
+- Large uploads and very large text / JSON inputs are rejected early to reduce accidental overload
+- Files, text, and callback URLs are still sent to the configured Gaius-Lex-compatible API, so only use trusted hosts
 
 ## Available Operations
 
@@ -92,6 +101,7 @@ The `Gaius-Lex` node currently supports the following operations.
 - Use webhook operations when Gaius-Lex should call back to your workflow endpoint
 - File-based operations such as OCR and external vectorization expect binary input data
 - JSON fields in the node, such as messages, rules, or source filters, must contain valid JSON
+- Callback endpoints must be absolute HTTP(S) URLs
 
 ## Example Flows
 
