@@ -195,7 +195,10 @@ export class GaiusLex implements INodeType {
 		group: ['transform'],
 		version: 1,
 		description: 'Interact with the Gaius-Lex API',
-		defaults: {},
+		defaults: {
+			name: 'Gaius-Lex',
+			color: '#2E5B8A',
+		},
 		inputs: ['main'],
 		outputs: ['main'],
 		credentials: [
